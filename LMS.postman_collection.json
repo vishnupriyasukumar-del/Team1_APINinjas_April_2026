@@ -1,10 +1,9 @@
 {
   "info": {
-    "_postman_id": "bc189a37-998b-4aed-ba75-a135a13eac6d",
+    "_postman_id": "4757a926-05d1-4e6c-869f-d222b593cfcd",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "45517037",
-    "_collection_link": "https://go.postman.co/collection/45517037-bc189a37-998b-4aed-ba75-a135a13eac6d?source=collection_link"
+    "_exporter_id": "13687372"
   },
   "item": [
     {
@@ -24,6 +23,7 @@
                   "    pm.response.to.have.status(200);",
                   "});",
                   "//testing for creating pull request",
+                  "//testing integration",
                   ""
                 ],
                 "type": "text/javascript",
