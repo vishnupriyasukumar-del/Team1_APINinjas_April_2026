@@ -1,0 +1,334 @@
+{
+  "info": {
+    "_postman_id": "df534d28-ebcf-4c3d-8bec-42dc0780a1ac",
+    "name": "LMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53720519",
+    "_collection_link": "https://go.postman.co/collection/53720519-df534d28-ebcf-4c3d-8bec-42dc0780a1ac?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User Login Controller",
+      "item": [
+        {
+          "name": "User Sign In",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "const lms_token = responseData.token;",
+                  "pm.collectionVariables.set(\"lms_access_token\",lms_token);",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\"password\": \"Team01@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Program Module",
+      "item": [
+        {
+          "name": "GET All Programs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allPrograms",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allPrograms"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET All Programs with Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZWFtMDFAZ21haWwuY29tIiwiaWF0IjoxNzc2MjYxODQ2LCJleHAiOjE3NzYyOTA2NDZ9.yh78W6lo1fsObvs4imlK1kRmHwHXWogYJ8k_gCsUwqTY3upszCZ8xSZtqFZLqEuf9dy_wNZrJTXQ7fmBLLi2tQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allProgramsWithUsers",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allProgramsWithUsers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Program Batch Module",
+      "item": [
+        {
+          "name": "GET All Batches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/batches",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Module",
+      "item": [
+        {
+          "name": "User Module",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/users",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Class Module",
+      "item": [
+        {
+          "name": "Get All Class List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allClasses",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allClasses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "lms_access_token",
+      "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZWFtMDFAZ21haWwuY29tIiwiaWF0IjoxNzc2MjYxODQ2LCJleHAiOjE3NzYyOTA2NDZ9.yh78W6lo1fsObvs4imlK1kRmHwHXWogYJ8k_gCsUwqTY3upszCZ8xSZtqFZLqEuf9dy_wNZrJTXQ7fmBLLi2tQ"
+    }
+  ]
+}
