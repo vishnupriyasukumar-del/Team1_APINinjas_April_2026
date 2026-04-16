@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "3bdc4c50-ed1c-4471-bd14-c345f34382f9",
+    "_postman_id": "88b08e1f-274f-4dc4-b5e1-e60415c216f5",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "8806598"
+    "_exporter_id": "13687372"
   },
   "item": [
     {
@@ -22,8 +22,60 @@
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
-                  "//testing for creating pull request",
-                  "//testing integration",
+                  "",
+                  "pm.test(\"Response to have the field token\",function(){",
+                  "    pm.expect(responseData).to.have.property('token');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field Type\",function(){",
+                  "    pm.expect(responseData).to.have.property('type');",
+                  "});",
+                  "pm.test(\"Response to have the field userID\",function(){",
+                  "    pm.expect(responseData).to.have.property('userId');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field email\",function(){",
+                  "    pm.expect(responseData).to.have.property('email');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field roles\",function(){",
+                  "    pm.expect(responseData).to.have.property('roles');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field status\",function(){",
+                  "    pm.expect(responseData).to.have.property('status');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field password\",function(){",
+                  "    pm.expect(responseData).to.have.property('passwordExpired')",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for Token\", function () {",
+                  "    pm.expect(responseData.token).to.be.a('string');",
+                  "});",
+                  "pm.test(\"validating response body data type for Type\", function () {",
+                  "    pm.expect(responseData.type).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for userID\", function () {",
+                  "      pm.expect(responseData.userId).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for email\", function () {",
+                  "   pm.expect(responseData.email).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for roles\", function () {",
+                  " pm.expect(responseData.roles).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for status\", function () {",
+                  "    pm.expect(responseData.status).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for passwordExpired\", function () {",
+                  "    pm.expect(responseData.passwordExpired).to.be.a('boolean');",
+                  "});",
                   ""
                 ],
                 "type": "text/javascript",
@@ -64,7 +116,137 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "User Sign Bad request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Responsebody matches string for the Message: Json parse error \", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");",
+                  "});",
+                  "",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"false\");",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Sign Invalid enpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\"password\": \"Team01@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login/",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Logout successful\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"Logout successful\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -79,7 +261,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/",
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logoutlms",
               "protocol": "https",
               "host": [
                 "lms-hackathon-api-april-2026-8b55b53c8fab",
@@ -88,7 +270,63 @@
               ],
               "path": [
                 "lms",
-                ""
+                "logoutlms"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Invalid endpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ResponseBody matches string for the Message: Request method 'GET' is not supported \", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"Request method 'GET' is not supported\");\r",
+                  "\r",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"false\");\r",
+                  "});\r",
+                  "\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logout",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "logout"
               ]
             }
           },
