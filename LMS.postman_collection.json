@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "4757a926-05d1-4e6c-869f-d222b593cfcd",
+    "_postman_id": "3bdc4c50-ed1c-4471-bd14-c345f34382f9",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "13687372"
+    "_exporter_id": "8806598"
   },
   "item": [
     {
@@ -263,16 +263,64 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/users",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/users",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
                 "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Module Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userComments\": \"New user created for testing\",\r\n\"userEduPg\": \"MS\",\r\n\"userEduUg\":\"BTech\",\r\n\"userFirstName\":\"John\",\r\n\"userLastName\": \"Doe\",\r\n\"userMiddleName\": \"A\",\r\n\"userPhoneNumber\": \"+1 4251234567\",\r\n\"userLinkedinUrl\": \"http://www.linkedin.com/john-doe\",\r\n\"userLocation\": \"Seattle\",\r\n\"userLogin\": {\r\n\"loginStatus\" : \"Active\",\r\n\"userLoginEmail\": \"testemail@gmail.com\"\r\n},\r\n\"userRoleMaps\": [\r\n{\r\n\"roleId\": \"R03\",\r\n\"userRoleStatus\": \"Active\"\r\n}\r\n],\r\n\"userTimeZone\": \"PST\",\r\n\"userVisaStatus\": \"H1B\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleStatus"
               ]
             }
           },
@@ -360,6 +408,10 @@
     {
       "key": "lms_access_token",
       "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZWFtMDFAZ21haWwuY29tIiwiaWF0IjoxNzc2MjYxODQ2LCJleHAiOjE3NzYyOTA2NDZ9.yh78W6lo1fsObvs4imlK1kRmHwHXWogYJ8k_gCsUwqTY3upszCZ8xSZtqFZLqEuf9dy_wNZrJTXQ7fmBLLi2tQ"
+    },
+    {
+      "key": "baseUrl",
+      "value": "https://lms-hackathon-api-april\n-2026-8b55b53c8fab.herokuap\np.com/lms"
     }
   ]
 }
