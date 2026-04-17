@@ -1,10 +1,9 @@
 {
   "info": {
-    "_postman_id": "98d1cfcd-86f1-4138-8e5b-f313d325c736",
+    "_postman_id": "e137abcd-049f-4baf-b037-86357b5bbb66",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "45517037",
-    "_collection_link": "https://go.postman.co/collection/45517037-98d1cfcd-86f1-4138-8e5b-f313d325c736?source=collection_link"
+    "_exporter_id": "13687372"
   },
   "item": [
     {
@@ -124,8 +123,8 @@
               "script": {
                 "exec": [
                   "",
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
                   "});",
                   "",
                   "",
@@ -184,8 +183,8 @@
               "script": {
                 "exec": [
                   "",
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
                   "});",
                   ""
                 ],
@@ -284,8 +283,8 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
+                  "pm.test(\"Status code is 405\", function () {\r",
+                  "    pm.response.to.have.status(405);\r",
                   "});\r",
                   "\r",
                   "pm.test(\"ResponseBody matches string for the Message: Request method 'GET' is not supported \", function () {\r",
