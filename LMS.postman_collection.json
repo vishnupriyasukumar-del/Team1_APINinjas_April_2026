@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "97efd1b7-6cee-4f5d-8879-b30419d1fcce",
+    "_postman_id": "de4d721e-90ee-41b6-82ae-8959cc6e1017",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53617151",
-    "_collection_link": "https://go.postman.co/collection/53617151-97efd1b7-6cee-4f5d-8879-b30419d1fcce?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53617151-de4d721e-90ee-41b6-82ae-8959cc6e1017?source=collection_link"
   },
   "item": [
     {
@@ -385,37 +385,6 @@
           "response": []
         },
         {
-          "name": "GET All Programs with Users",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{vault:authorization-secret}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allProgramsWithUsers",
-              "protocol": "https",
-              "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
-              ],
-              "path": [
-                "lms",
-                "allProgramsWithUsers"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Add New Program Chanining",
           "event": [
             {
@@ -428,16 +397,16 @@
                   "",
                   "    // Save programId",
                   "    pm.collectionVariables.set(\"programIdChaining\", responseData.programId);",
-                  "console.log(\"The programIdChaining chaining is \" +pm.collectionVariables.get(\"programIdChaining\"));",
+                  "",
                   "    // Save programName",
                   "    pm.collectionVariables.set(\"programNameChaining\", responseData.programName);",
-                  "    console.log(\"The programNameChaining chaining is \" +pm.collectionVariables.get(\"programNameChaining\"));",
                   "",
                   "    console.log(\"Saved programId:\", responseData.programId);",
                   "    console.log(\"Saved programName:\", responseData.programName);",
                   "} else {",
                   "    console.log(\"Program not created. Status:\", pm.response.code);",
-                  "}"
+                  "}",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -450,11 +419,12 @@
                 "exec": [
                   "const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
                   "",
-                  "const programName = \"tm\" + randomLetters(2);",
+                  "const programName = \"teamone\" + randomLetters(5);",
                   "",
                   "pm.variables.set(\"programName\", programName);",
                   "",
-                  "console.log(\"Generated Program Name for chaining:\", programName);"
+                  "console.log(\"Generated Program Name:\", programName);",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -495,6 +465,37 @@
               "path": [
                 "lms",
                 "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET All Programs with Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{vault:authorization-secret}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allProgramsWithUsers",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allProgramsWithUsers"
               ]
             }
           },
@@ -1167,6 +1168,1303 @@
       "name": "Program Batch Module",
       "item": [
         {
+          "name": "Add New Program Batch Chaining",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "\r",
+                  "// Generate small random number (1-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 999) + 1;\r",
+                  "\r",
+                  "// Construct batch name \r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Save batchName to collection variables\r",
+                  "pm.collectionVariables.set(\"batchName\", batchName);\r",
+                  "\r",
+                  "// Console logs\r",
+                  "console.log(\"programName: \" + programName);\r",
+                  "console.log(\"batchName: \" + batchName + \" | Length: \" + batchName.length);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code check\r",
+                  "pm.test(\"Status code is 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "// 2. Capture batchName and save to collection variable\r",
+                  "pm.test(\"Capture batchName from response\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"batchName\");\r",
+                  "    pm.collectionVariables.set(\"batchNameChaining\", jsonData.batchName);\r",
+                  "    console.log(\"Saved batchNameChaining: \" + jsonData.batchName);\r",
+                  "});\r",
+                  "\r",
+                  "// 3. Capture batchId and save to collection variable\r",
+                  "pm.test(\"Capture batchId from response\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"batchId\");\r",
+                  "    pm.collectionVariables.set(\"batchIdChaining\", jsonData.batchId);\r",
+                  "    console.log(\"Saved batchIdChaining: \" + jsonData.batchId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"batchDescription\": \"Testing\",   \r\n    \"batchName\": \"{{batchName}}\",   \r\n    \"batchNoOfClasses\": 10,   \r\n    \"batchStatus\": \"Active\",   \r\n    \"programId\": {{programIdChaining}},   \r\n    \"programName\": \"{{programNameChaining}}\"      \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Lms_BaseUrl}}/batches",
+              "host": [
+                "{{Lms_BaseUrl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program Batch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Status code check only - no variable saving\r",
+                  "pm.test(\"Status code is 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "// 2. Capture batchId from response\r",
+                  "pm.test(\"Capture batchId2 from response\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"batchId\");\r",
+                  "    pm.collectionVariables.set(\"batchId2\", jsonData.batchId);\r",
+                  "    console.log(\"Saved batchId2: \" + jsonData.batchId);\r",
+                  "\r",
+                  "    pm.collectionVariables.set(\"batchNoOfClasses\", jsonData.batchNoOfClasses);\r",
+                  "console.log(\"Saved batchNoOfClasses: \" + jsonData.batchNoOfClasses);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchName2\", batchName);\r",
+                  "console.log(\"batchName2: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"batchDescription\": \"Testing\",   \r\n    \"batchName\":   \"{{batchName2}}\",\r\n    \"batchNoOfClasses\": 10,   \r\n    \"batchStatus\": \"Active\",   \r\n    \"programId\": {{programIdChaining}},   \r\n    \"programName\": \"{{programNameChaining}}\"      \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MandatoryField_validation_Missing Batch Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for missing batchName\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchName2\", batchName);\r",
+                  "console.log(\"batchName2: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"batchDescription\": \"Testing\",   \r\n    \"batchNoOfClasses\": 10,   \r\n    \"batchStatus\": \"Active\",   \r\n    \"programId\": {{programIdChaining}},   \r\n    \"programName\": \"{{programNameChaining}}\"      \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MandatoryField_validation_Missing ProgramId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for missing programId\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchName2\", batchName);\r",
+                  "console.log(\"batchName2: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"{{batchNameChaining}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MandatoryField_validation_Missing BatchStatus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for missing batchStatus\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchName2\", batchName);\r",
+                  "console.log(\"batchName2: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"{{batchNameChaining}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MandatoryField_validation_Missing BatchNoOfClasses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for missing batchNoOfClasses\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchName2\", batchName);\r",
+                  "console.log(\"batchName2: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"{{batchNameChaining}}\",\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BatchName < 6 char",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for batchName less than 6 characters\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"tm_1\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BatchName > 28 char",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for batchName less than 6 characters\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate batchName more than 28 characters\r",
+                  "\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "const longBatchName = programName + \"_\" + \"123456789012345678901234\";\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"longBatchName\", longBatchName);\r",
+                  "\r",
+                  "console.log(\"longBatchName: \" + longBatchName + \" | Length: \" + longBatchName.length);\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"{{longBatchName}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BatchName Format_No Underscore",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for wrong batchName format - no underscore\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"tmRL1234\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BatchName Format_No ProgramName",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for wrong batchName format - no programName\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"_1234231\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BatchName Format_No Number",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for wrong batchName format - no number\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Testing\",\r\n    \"batchName\": \"tmRL_abc\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Description < 4 char",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for description less than 4 characters\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 90) + 10;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchNameDesc\", batchName);\r",
+                  "console.log(\"batchNameDesc: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"ABC\",\r\n    \"batchName\": \"{{batchNameDesc}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Description > 25 char",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for description less than 4 characters\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 90) + 10;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchNameDesc\", batchName);\r",
+                  "console.log(\"batchNameDesc: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"This description is too long dgsgweHrfjhdHwhhHZNFDMJERJNTZE\",\r\n    \"batchName\": \"{{batchNameDesc}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Inactive\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Description > 25 char",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"batchDescription\": \"This description is too long dgsgweHrfjhdHwhhHZNFDMJERJNTZE\",\r\n    \"batchName\": \"{{batchNameDesc}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{LMS_baseurl}}/batch/batches",
+                  "host": [
+                    "{{LMS_baseurl}}"
+                  ],
+                  "path": [
+                    "batch",
+                    "batches"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "0"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sat, 18 Apr 2026 15:56:05 GMT"
+                },
+                {
+                  "key": "Expires",
+                  "value": "0"
+                },
+                {
+                  "key": "Nel",
+                  "value": "{\"report_to\":\"heroku-nel\",\"response_headers\":[\"Via\"],\"max_age\":3600,\"success_fraction\":0.01,\"failure_fraction\":0.1}"
+                },
+                {
+                  "key": "Pragma",
+                  "value": "no-cache"
+                },
+                {
+                  "key": "Report-To",
+                  "value": "{\"group\":\"heroku-nel\",\"endpoints\":[{\"url\":\"https://nel.heroku.com/reports?s=abK5xRaIqUuaeh2HS9k23wES7Ez%2FZS0fyKW9%2FES2NSA%3D\\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\\u0026ts=1776527765\"}],\"max_age\":3600}"
+                },
+                {
+                  "key": "Reporting-Endpoints",
+                  "value": "heroku-nel=\"https://nel.heroku.com/reports?s=abK5xRaIqUuaeh2HS9k23wES7Ez%2FZS0fyKW9%2FES2NSA%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1776527765\""
+                },
+                {
+                  "key": "Server",
+                  "value": "Heroku"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Access-Control-Request-Method"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Access-Control-Request-Headers"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 heroku-router"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "X-Xss-Protection",
+                  "value": "0"
+                }
+              ],
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "Description special character",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error message for description less than 4 characters\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.success).to.eql(false);\r",
+                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get programName from collection variables\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "\r",
+                  "// Generate random 3-digit number (100-999)\r",
+                  "const randomNum = Math.floor(Math.random() * 90) + 10;\r",
+                  "\r",
+                  "// Construct batch name\r",
+                  "let batchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (batchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    batchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Validate min length 6\r",
+                  "if (batchName.length < 6) {\r",
+                  "    batchName = batchName.padEnd(6, \"0\");\r",
+                  "}\r",
+                  "\r",
+                  "// Set batchName in collection variables\r",
+                  "pm.collectionVariables.set(\"batchNameDesc\", batchName);\r",
+                  "console.log(\"batchNameDesc: \" + batchName + \" | Length: \" + batchName.length);\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"Thisdescription!!\",\r\n    \"batchName\": \"{{batchNameDesc}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "GET All Batches",
           "event": [
             {
@@ -1207,6 +2505,315 @@
               "path": [
                 "lms",
                 "batches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Batch by ProgramId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () \r",
+                  "{\r",
+                  "     pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LMS_baseurl}}/programs/{{programIdChaining}}",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "programs",
+                "{{programIdChaining}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Batch by BatchID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () \r",
+                  "{\r",
+                  "     pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches/batchId/{{batchId2}}",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches",
+                "batchId",
+                "{{batchId2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Batch by BatchName",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () \r",
+                  "{\r",
+                  "     pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches/batchName/{{batchName}}",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches",
+                "batchName",
+                "{{batchName}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Batch by BatchID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code check\r",
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "// 2. Verify batchDescription is updated\r",
+                  "pm.test(\"batchDescription is updated\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchDescription).to.eql(pm.collectionVariables.get(\"updatedDescription\"));\r",
+                  "});\r",
+                  "\r",
+                  "// 3. Verify batchName is updated\r",
+                  "pm.test(\"batchName is updated\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.eql(pm.collectionVariables.get(\"updatedBatchName\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "\r",
+                  "// Generate dynamic description\r",
+                  "const updatedDescription = \"Updated_Desc_\" + Math.floor(Math.random() * 999);\r",
+                  "\r",
+                  "// Generate new dynamic batchName using programName\r",
+                  "const programName = pm.collectionVariables.get(\"programNameChaining\");\r",
+                  "const randomNum = Math.floor(Math.random() * 900) + 100;\r",
+                  "let updatedBatchName = programName + \"_\" + randomNum;\r",
+                  "\r",
+                  "// Validate max length 28\r",
+                  "if (updatedBatchName.length > 28) {\r",
+                  "    const maxLength = 28 - (\"_\" + randomNum).length;\r",
+                  "    updatedBatchName = programName.substring(0, maxLength) + \"_\" + randomNum;\r",
+                  "}\r",
+                  "\r",
+                  "// Save to collection variables\r",
+                  "pm.collectionVariables.set(\"updatedDescription\", updatedDescription);\r",
+                  "pm.collectionVariables.set(\"updatedBatchName\", updatedBatchName);\r",
+                  "\r",
+                  "// Console logs\r",
+                  "console.log(\"updatedDescription: \" + updatedDescription);\r",
+                  "console.log(\"updatedBatchName: \" + updatedBatchName);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"batchDescription\": \"{{updatedDescription}}\",\r\n    \"batchId\": {{batchId2}},\r\n    \"batchName\": \"{{updatedBatchName}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches/{{batchId2}}",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches",
+                "{{batchId2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete by BatchId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () \r",
+                  "{\r",
+                  "     pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n\r\n  ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LMS_baseurl}}/batches/{{batchId2}}",
+              "host": [
+                "{{LMS_baseurl}}"
+              ],
+              "path": [
+                "batches",
+                "{{batchId2}}"
               ]
             }
           },
