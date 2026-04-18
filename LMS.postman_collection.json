@@ -1267,9 +1267,9 @@
               }
             },
             "url": {
-              "raw": "{{Lms_BaseUrl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{Lms_BaseUrl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1365,9 +1365,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1387,9 +1387,8 @@
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
                   "pm.test(\"Error message for missing batchName\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.eql(\"Batch Name is mandatory\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1456,9 +1455,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1478,9 +1477,8 @@
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
                   "pm.test(\"Error message for missing programId\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.programId).to.include(\"ProgramId field is needed\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1547,9 +1545,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1569,9 +1567,11 @@
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
                   "pm.test(\"Error message for missing batchStatus\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchStatus).to.satisfy(function(val) {\r",
+                  "        return val === \"Batch status is needed\" || \r",
+                  "               val === \"Invalid Status: must be Active or Inactive\";\r",
+                  "    });\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1638,9 +1638,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1660,9 +1660,8 @@
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
                   "pm.test(\"Error message for missing batchNoOfClasses\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchNoOfClasses).to.include(\"No of Classes is needed\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1729,9 +1728,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1750,10 +1749,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for batchName less than 6 characters\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for batchName length validation\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.include(\"Batch Name must be of min length 6 and max length 28\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1798,9 +1796,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1819,10 +1817,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for batchName less than 6 characters\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for batchName length validation\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.include(\"Batch Name must be of min length 6 and max length 28\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1877,9 +1874,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1898,10 +1895,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for wrong batchName format - no underscore\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for wrong batchName format\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.include(\"batchName Must be in the format of ProgramName_<number>\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1944,9 +1940,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -1965,10 +1961,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for wrong batchName format - no programName\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for wrong batchName format\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.include(\"batchName Must be in the format of ProgramName_<number>\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -2011,9 +2006,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -2032,10 +2027,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for wrong batchName format - no number\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for wrong batchName format\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchName).to.include(\"batchName Must be in the format of ProgramName_<number>\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -2078,9 +2072,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -2169,9 +2163,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -2260,118 +2254,16 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
               ]
             }
           },
-          "response": [
-            {
-              "name": "Description > 25 char",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"batchDescription\": \"This description is too long dgsgweHrfjhdHwhhHZNFDMJERJNTZE\",\r\n    \"batchName\": \"{{batchNameDesc}}\",\r\n    \"batchNoOfClasses\": 10,\r\n    \"batchStatus\": \"Active\",\r\n    \"programId\": {{programIdChaining}},\r\n    \"programName\": \"{{programNameChaining}}\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{LMS_baseurl}}/batch/batches",
-                  "host": [
-                    "{{LMS_baseurl}}"
-                  ],
-                  "path": [
-                    "batch",
-                    "batches"
-                  ]
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "_postman_previewlanguage": null,
-              "header": [
-                {
-                  "key": "Cache-Control",
-                  "value": "no-cache, no-store, max-age=0, must-revalidate"
-                },
-                {
-                  "key": "Content-Length",
-                  "value": "0"
-                },
-                {
-                  "key": "Date",
-                  "value": "Sat, 18 Apr 2026 15:56:05 GMT"
-                },
-                {
-                  "key": "Expires",
-                  "value": "0"
-                },
-                {
-                  "key": "Nel",
-                  "value": "{\"report_to\":\"heroku-nel\",\"response_headers\":[\"Via\"],\"max_age\":3600,\"success_fraction\":0.01,\"failure_fraction\":0.1}"
-                },
-                {
-                  "key": "Pragma",
-                  "value": "no-cache"
-                },
-                {
-                  "key": "Report-To",
-                  "value": "{\"group\":\"heroku-nel\",\"endpoints\":[{\"url\":\"https://nel.heroku.com/reports?s=abK5xRaIqUuaeh2HS9k23wES7Ez%2FZS0fyKW9%2FES2NSA%3D\\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\\u0026ts=1776527765\"}],\"max_age\":3600}"
-                },
-                {
-                  "key": "Reporting-Endpoints",
-                  "value": "heroku-nel=\"https://nel.heroku.com/reports?s=abK5xRaIqUuaeh2HS9k23wES7Ez%2FZS0fyKW9%2FES2NSA%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1776527765\""
-                },
-                {
-                  "key": "Server",
-                  "value": "Heroku"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000 ; includeSubDomains"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Access-Control-Request-Method"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Access-Control-Request-Headers"
-                },
-                {
-                  "key": "Via",
-                  "value": "1.1 heroku-router"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "DENY"
-                },
-                {
-                  "key": "X-Xss-Protection",
-                  "value": "0"
-                }
-              ],
-              "cookie": [],
-              "body": null
-            }
-          ]
+          "response": []
         },
         {
           "name": "Description special character",
@@ -2383,10 +2275,9 @@
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
-                  "pm.test(\"Error message for description less than 4 characters\", function () {\r",
-                  "    const jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.success).to.eql(false);\r",
-                  "    pm.expect(jsonData).to.have.property(\"message\");\r",
+                  "pm.test(\"Error message for description validation\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.batchDescription).to.include(\"batchDescription must begin with letter\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -2453,9 +2344,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches"
@@ -2495,15 +2386,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/batches",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/batches",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
                 "batches"
               ]
             }
@@ -2542,9 +2429,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{LMS_baseurl}}/programs/{{programIdChaining}}",
+              "raw": "{{baseUrl}}/programs/{{programIdChaining}}",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "programs",
@@ -2598,9 +2485,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches/batchId/{{batchId2}}",
+              "raw": "{{baseUrl}}/batches/batchId/{{batchId2}}",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches",
@@ -2655,9 +2542,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches/batchName/{{batchName}}",
+              "raw": "{{baseUrl}}/batches/batchName/{{batchName}}",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches",
@@ -2754,9 +2641,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches/{{batchId2}}",
+              "raw": "{{baseUrl}}/batches/{{batchId2}}",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches",
@@ -2807,9 +2694,9 @@
               }
             },
             "url": {
-              "raw": "{{LMS_baseurl}}/batches/{{batchId2}}",
+              "raw": "{{baseUrl}}/batches/{{batchId2}}",
               "host": [
-                "{{LMS_baseurl}}"
+                "{{baseUrl}}"
               ],
               "path": [
                 "batches",
@@ -3004,6 +2891,62 @@
     {
       "key": "baseUrl",
       "value": "https://lms-hackathon-api-april\n-2026-8b55b53c8fab.herokuap\np.com/lms"
+    },
+    {
+      "key": "programIdChaining",
+      "value": ""
+    },
+    {
+      "key": "programNameChaining",
+      "value": ""
+    },
+    {
+      "key": "program_id",
+      "value": ""
+    },
+    {
+      "key": "inactive_pgm_id",
+      "value": ""
+    },
+    {
+      "key": "batchName",
+      "value": ""
+    },
+    {
+      "key": "batchNameChaining",
+      "value": ""
+    },
+    {
+      "key": "batchIdChaining",
+      "value": ""
+    },
+    {
+      "key": "batchName2",
+      "value": ""
+    },
+    {
+      "key": "batchId2",
+      "value": ""
+    },
+    {
+      "key": "batchNoOfClasses",
+      "value": ""
+    },
+    {
+      "key": "batchNameDesc",
+      "value": ""
+    },
+    {
+      "key": "updatedDescription",
+      "value": ""
+    },
+    {
+      "key": "updatedBatchName",
+      "value": ""
+    },
+    {
+      "key": "longBatchName",
+      "value": ""
     }
   ]
 }
