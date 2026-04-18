@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "09a23bdd-840f-4ac1-b118-1246d31a4d89",
+    "_postman_id": "e137abcd-049f-4baf-b037-86357b5bbb66",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "8806598"
+    "_exporter_id": "13687372"
   },
   "item": [
     {
@@ -352,18 +352,6 @@
                 "packages": {},
                 "requests": {}
               }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
             }
           ],
           "request": {
@@ -397,20 +385,6 @@
         },
         {
           "name": "GET All Programs with Users",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -1162,11 +1136,6 @@
             "packages": {},
             "requests": {},
             "exec": [
-              "if (pm.iterationData.get(\"moduleType\") !== \"Program\") {",
-              "    postman.setNextRequest(null);",
-              "    return;",
-              "}",
-              "",
               "pm.variables.set(\"randomLettersFunction\", `",
               "    (length) => {",
               "        const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\";",
@@ -1249,14 +1218,56 @@
       "name": "User Module",
       "item": [
         {
-          "name": "Create  single user",
+          "name": "User Module",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201 or 400\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Module Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1281,143 +1292,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\r\n\"userComments\": \"New user created for testing\",\r\n\"userEduPg\": \"MS\",\r\n\"userEduUg\":\"BTech\",\r\n\"userFirstName\":\"John\",\r\n\"userLastName\": \"Doe\",\r\n\"userMiddleName\": \"A\",\r\n\"userPhoneNumber\": \"+1 4251234567\",\r\n\"userLinkedinUrl\": \"http://www.linkedin.com/john-doe\",\r\n\"userLocation\": \"Seattle\",\r\n\"userLogin\": {\r\n\"loginStatus\" : \"Active\",\r\n\"userLoginEmail\": \"testemail@gmail.com\"\r\n},\r\n\"userRoleMaps\": [\r\n{\r\n\"roleId\": \"R03\",\r\n\"userRoleStatus\": \"Active\"\r\n}\r\n],\r\n\"userTimeZone\": \"PST\",\r\n\"userVisaStatus\": \"H1B\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users/roleStatus",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                "roleStatus"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Creating user with Role",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.iterationData.get(\"moduleType\") !== \"User\") {",
-                  "    postman.setNextRequest(null);",
-                  "    return;",
-                  "}",
-                  "let res = pm.response.json();",
-                  "",
-                  "pm.test(\"Status code is 201 or 400\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
-                  "});",
-                  "",
-                  "if (pm.response.code === 201) {",
-                  "",
-                  "    pm.test(\"User object exists\", function () {",
-                  "        pm.expect(res).to.have.property(\"user\");",
-                  "    });",
-                  "",
-                  "    pm.test(\"Roles array exists\", function () {",
-                  "        pm.expect(res).to.have.property(\"roles\");",
-                  "        pm.expect(res.roles).to.be.an(\"array\").that.is.not.empty;",
-                  "    });",
-                  "",
-                  "    pm.test(\"User fields are present\", function () {",
-                  "        pm.expect(res.user).to.have.property(\"userId\");",
-                  "        pm.expect(res.user).to.have.property(\"userFirstName\");",
-                  "        pm.expect(res.user).to.have.property(\"userLastName\");",
-                  "        pm.expect(res.user).to.have.property(\"userPhoneNumber\");",
-                  "        pm.expect(res.user).to.have.property(\"userLocation\");",
-                  "        pm.expect(res.user).to.have.property(\"userLinkedinUrl\");",
-                  "        pm.expect(res.user).to.have.property(\"userEduUg\");",
-                  "        pm.expect(res.user).to.have.property(\"userEduPg\");",
-                  "        pm.expect(res.user).to.have.property(\"userComments\");",
-                  "        pm.expect(res.user).to.have.property(\"userVisaStatus\");",
-                  "        pm.expect(res.user).to.have.property(\"userLoginEmail\");",
-                  "    });",
-                  "",
-                  "    pm.test(\"User ID format is valid (U + number)\", function () {",
-                  "        pm.expect(res.user.userId).to.match(/^U\\d+$/);",
-                  "    });",
-                  "}",
-                  "",
-                  "if (pm.response.code === 400) {",
-                  "",
-                  "    pm.test(\"Error message contains phone number exists\", function () {",
-                  "        pm.expect(pm.response.text()).to.include(\"already exists\");",
-                  "    });",
-                  "",
-                  "    pm.test(\"Response contains success flag or message\", function () {",
-                  "        pm.expect(pm.response.text().length).to.be.greaterThan(0);",
-                  "    });",
-                  "}",
-                  "",
-                  "if (pm.response.code === 201) {",
-                  "    const roleMapping = { \"R01\": \"Admin\", \"R02\": \"Staff\", \"R03\": \"Student\" };",
-                  "    const expectedStatus = roleMapping[pm.iterationData.get(\"roleId\")];",
-                  "",
-                  "    pm.test(\"Role Status matches Mapping (Admin/Staff/Student)\", function () {",
-                  "        pm.expect(res.roles[0].userRoleStatus).to.eql(expectedStatus);",
-                  "    });",
-                  "}",
-                  "",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "const roleMapping = {\r",
-                  "    \"R01\": \"Admin\",\r",
-                  "    \"R02\": \"Staff\",\r",
-                  "    \"R03\": \"Student\"\r",
-                  "}\r",
-                  "\r",
-                  "const csvRoleId = pm.iterationData.get(\"roleId\");\r",
-                  "const assignedStatus = roleMapping[csvRoleId] || \"Active\";\r",
-                  "\r",
-                  "const roles = [\r",
-                  "    {\r",
-                  "        \"roleId\": csvRoleId,\r",
-                  "        \"userRoleStatus\": assignedStatus\r",
-                  "    }\r",
-                  "];\r",
-                  "\r",
-                  "pm.variables.set(\"roleMapsArray\", JSON.stringify(roles));"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"userFirstName\": \"{{userFirstName}}\",\r\n  \"userLastName\": \"{{userLastName}}\",\r\n  \"userMiddleName\": \"{{userMiddleName}}\",\r\n  \"userPhoneNumber\": \"{{userPhoneNumber}}\",\r\n  \"userLocation\": \"{{userLocation}}\",\r\n  \"userTimeZone\": \"{{userTimeZone}}\",\r\n  \"userVisaStatus\": \"{{userVisaStatus}}\",\r\n  \"userLoginEmail\": \"{{userLoginEmail}}\",\r\n  \"loginStatus\": \"{{loginStatus}}\",\r\n  \"roleId\": \"{{roleId}}\",\r\n  \"userRoleStatus\": \"{{userRoleStatus}}\",\r\n  \"userEduUg\": \"{{userEduUg}}\",\r\n  \"userEduPg\": \"{{userEduPg}}\",\r\n  \"userComments\": \"{{userComments}}\",\r\n  \"userLinkedinUrl\": \"{{userLinkedinUrl}}\"\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
