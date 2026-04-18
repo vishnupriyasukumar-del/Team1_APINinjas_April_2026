@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "d042c407-354d-4638-9571-383b5794021b",
+    "_postman_id": "c56a6437-14b6-495e-b651-02fe70892646",
     "name": "LMS Priya",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53720519",
-    "_collection_link": "https://go.postman.co/collection/53720519-d042c407-354d-4638-9571-383b5794021b?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53720519-c56a6437-14b6-495e-b651-02fe70892646?source=collection_link"
   },
   "item": [
     {
@@ -336,7 +336,7 @@
               },
               "status": "Created",
               "code": 201,
-              "_postman_previewlanguage": null,
+              "_postman_previewlanguage": "Text",
               "header": [
                 {
                   "key": "Cache-Control",
