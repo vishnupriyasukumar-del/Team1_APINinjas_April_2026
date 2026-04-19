@@ -616,6 +616,7 @@
                   "    });",
                   "});",
                   "",
+                  "",
                   "pm.test(\"User required fields exist\", function () {",
                   "    const mandatory = [",
                   "        \"userId\",\"userFirstName\",\"userLastName\",",
@@ -803,6 +804,9 @@
                   "// Store programId for delete",
                   "pm.collectionVariables.set(\"program_id\", responseData.programId);",
                   "",
+                  "  // Save programName",
+                  "    pm.collectionVariables.set(\"program_name\", responseData.programName);",
+                  "",
                   "// Log request + response",
                   "console.log(\"FINAL REQUEST BODY (Positive):\", JSON.parse(pm.request.body.raw));",
                   "console.log(\"Response Data for Add New Program Active Status:\", responseData);",
@@ -973,6 +977,115 @@
               "path": [
                 "lms",
                 "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Program by ProgramId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "const programData = pm.response.json();",
+                  "",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an object\", function () {",
+                  "    pm.expect(programData).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "pm.test(\"Required fields exist\", function () {",
+                  "    const keys = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "    pm.expect(Object.keys(programData)).to.include.members(keys);",
+                  "});",
+                  "",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    pm.expect(programData.programId).to.be.a(\"number\");",
+                  "    pm.expect(programData.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programName is valid\", function () {",
+                  "    pm.expect(programData.programName).to.be.a(\"string\");",
+                  "    pm.expect(programData.programName.trim().length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription is a valid string\", function () {",
+                  "    pm.expect(typeof programData.programDescription).to.eql(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription has no invalid special characters\", function () {",
+                  "    const regex = /^[A-Za-z][A-Za-z0-9,\\-:._ ]*$/;",
+                  "    pm.expect(regex.test(programData.programDescription)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"programStatus is valid\", function () {",
+                  "    pm.expect([\"Active\", \"Inactive\"]).to.include(programData.programStatus);",
+                  "});",
+                  "",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(programData.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(programData.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(programData.lastModTime))",
+                  "        .to.be.at.least(Date.parse(programData.creationTime));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/programs/{{program_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "programs",
+                "{{program_id}}"
               ]
             }
           },
