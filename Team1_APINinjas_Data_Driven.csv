@@ -3,3 +3,5 @@ Program,vj pgm testing,vj pgm,Inactive,negative,post,No active program with the 
 User,,,,,,,,John,Smith,A,9876543210,Seattle,PST,H1B,john.smith@test.com,Active,R02,Active,Btech,MS,Created via CSV,https://www.linkedin.com/john
 User,,,,,,,,Mary,Port,B,1234567890,Dallas,CST,US-Citizen,mary.port@test.com,Active,R03,Active,Bsc,MBA,Created via CSV,https://www.linkedin.com/mary
 User,,,,,,,,Ravi,Kumar,C,9988776655,Hyderabad,IST,Indian-Citizen,ravi.kumar@test.com,Active,R01,Active,BTech,Mtech,Created via CSV,https://www.linkedin.com/ravi
+Program,vj pgm testing,vj pgm,AcTiVe,positive,post,,,,,,,,,,,,,,,,,
+Program,sssssssssssssssssssssssss,vjlkjjjjjjjjjjjjjjj,ACTIVE,positive,post_long_pm,,,,,,,,,,,,,,,,,

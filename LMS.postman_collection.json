@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "af2b52b5-771c-4380-bc49-6d4ac5be7a82",
+    "_postman_id": "5850e6c2-e246-49be-82e7-5a11816a38f1",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "13687372"
+    "_exporter_id": "45517037",
+    "_collection_link": "https://go.postman.co/collection/45517037-5850e6c2-e246-49be-82e7-5a11816a38f1?source=collection_link"
   },
   "item": [
     {
@@ -344,9 +345,134 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "const responseData = pm.response.json();",
+                  "",
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
-                  "});"
+                  "});",
+                  "",
+                  "const schema = {",
+                  "    type: \"array\",",
+                  "    items: {",
+                  "        type: \"object\",",
+                  "        required: [",
+                  "            \"programId\",",
+                  "            \"programName\",",
+                  "            \"programDescription\",",
+                  "            \"programStatus\",",
+                  "            \"creationTime\",",
+                  "            \"lastModTime\"",
+                  "        ],",
+                  "        properties: {",
+                  "            programId: { type: \"number\" },",
+                  "            programName: { type: \"string\" },",
+                  "            programDescription: { type: [\"string\", \"null\"] },",
+                  "            programStatus: { type: \"string\" },",
+                  "            creationTime: { type: \"string\" },",
+                  "            lastModTime: { type: \"string\" }",
+                  "        }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Response matches schema\", function () {",
+                  "    pm.expect(responseData).to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Array is not empty\", function () {",
+                  "    pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each item is an object\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(item).to.be.an(\"object\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Each object contains required fields\", function () {",
+                  "    const expectedKeys = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(Object.keys(item)).to.have.members(expectedKeys);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(item.programId).to.be.a(\"number\");",
+                  "        pm.expect(item.programId).to.be.above(0);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programName is a non-empty string\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(item.programName).to.be.a(\"string\");",
+                  "        pm.expect(item.programName.trim().length).to.be.above(0);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription is null OR a string\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        const desc = item.programDescription;",
+                  "        pm.expect(desc === null || typeof desc === \"string\").to.be.true;",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programStatus is valid\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect([\"Active\", \"Inactive\"]).to.include(item.programStatus);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(Date.parse(item.creationTime)).to.not.be.NaN;",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(Date.parse(item.lastModTime)).to.not.be.NaN;",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(Date.parse(item.lastModTime))",
+                  "            .to.be.at.least(Date.parse(item.creationTime));",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programId values are unique\", function () {",
+                  "    const ids = responseData.map(x => x.programId);",
+                  "    pm.expect(new Set(ids).size).to.eql(ids.length);",
+                  "});",
+                  "",
+                  "pm.test(\"No extra fields present\", function () {",
+                  "    const allowed = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "",
+                  "    responseData.forEach(item => {",
+                  "        pm.expect(Object.keys(item)).to.have.members(allowed);",
+                  "    });",
+                  "});",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -409,6 +535,139 @@
                 "packages": {},
                 "requests": {}
               }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Array is not empty\", function () {",
+                  "    pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Each program is an object\", function () {",
+                  "    responseData.forEach(p => pm.expect(p).to.be.an(\"object\"));",
+                  "});",
+                  "",
+                  "pm.test(\"Program required fields exist\", function () {",
+                  "    const keys = [",
+                  "        \"programId\",\"programName\",\"programDescription\",",
+                  "        \"programStatus\",\"programUsers\",\"creationTime\",\"lastModTime\"",
+                  "    ];",
+                  "    responseData.forEach(p => pm.expect(Object.keys(p)).to.include.members(keys));",
+                  "});",
+                  "",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        pm.expect(p.programId).to.be.a(\"number\");",
+                  "        pm.expect(p.programId).to.be.above(0);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programName is valid\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        pm.expect(p.programName).to.be.a(\"string\");",
+                  "        pm.expect(p.programName.trim().length).to.be.above(0);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription is null or string\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        pm.expect(p.programDescription === null || typeof p.programDescription === \"string\").to.be.true;",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programStatus is valid\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        pm.expect([\"Active\",\"Inactive\"]).to.include(p.programStatus);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"creationTime is valid ISO\", function () {",
+                  "    responseData.forEach(p => pm.expect(Date.parse(p.creationTime)).to.not.be.NaN);",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is valid ISO\", function () {",
+                  "    responseData.forEach(p => pm.expect(Date.parse(p.lastModTime)).to.not.be.NaN);",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime >= creationTime\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        pm.expect(Date.parse(p.lastModTime)).to.be.at.least(Date.parse(p.creationTime));",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"programUsers is an array\", function () {",
+                  "    responseData.forEach(p => pm.expect(p.programUsers).to.be.an(\"array\"));",
+                  "});",
+                  "",
+                  "pm.test(\"Each user object is valid\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => pm.expect(u).to.be.an(\"object\"));",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"User required fields exist\", function () {",
+                  "    const mandatory = [",
+                  "        \"userId\",\"userFirstName\",\"userLastName\",",
+                  "        \"userPhoneNumber\",\"userLocation\",\"userTimeZone\",",
+                  "        \"userVisaStatus\",\"userLoginEmail\"",
+                  "    ];",
+                  "",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => {",
+                  "            mandatory.forEach(field => {",
+                  "                pm.expect(u).to.have.property(field);});",
+                  "    });",
+                  "    });",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"userId is valid\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => {",
+                  "            pm.expect(u.userId).to.be.a(\"string\");",
+                  "            pm.expect(u.userId.startsWith(\"U\")).to.be.true;",
+                  "        });",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"userFirstName and userLastName valid\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => {",
+                  "            pm.expect(u.userFirstName).to.be.a(\"string\");",
+                  "            pm.expect(u.userLastName).to.be.a(\"string\");",
+                  "        });",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"userPhoneNumber is string\", function () {",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => pm.expect(u.userPhoneNumber).to.be.a(\"string\"));",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"userLoginEmail is valid\", function () {",
+                  "    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;",
+                  "    responseData.forEach(p => {",
+                  "        p.programUsers.forEach(u => pm.expect(emailRegex.test(u.userLoginEmail)).to.be.true);",
+                  "    });",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
           ],
           "request": {
@@ -417,7 +676,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{vault:authorization-secret}}",
+                  "value": "{{lms_access_token}}",
                   "type": "string"
                 }
               ]
@@ -533,6 +792,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
                   "const responseData = pm.response.json();",
                   "",
                   "// Store programId for delete",
@@ -720,6 +985,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
                   "const responseData = pm.response.json();",
                   "",
                   "// Log response",
@@ -918,6 +1189,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
                   "// 1. Status code",
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
@@ -1152,6 +1430,402 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Add New Program with Max ProgramName and Program Description",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post_long_pm\") {",
+                  "console.log(\"The testtype is mixed case\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType is mixed case\"+pm.iterationData.get(\"requestType\"))",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post_long_pm\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "",
+                  "",
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Store programId for delete",
+                  "pm.collectionVariables.set(\"program_id\", responseData.programId);",
+                  "",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Add New Program with Mixed Case Program Status(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Add New Program Active StatusAdd New Program with Mixed Case Program Status:\", responseData);",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "//  programStatus matches iteration data (case-insensitive)",
+                  "// pm.test(\"Program Status matches iteration data (case-insensitive)\", function () {",
+                  "//     const expectedStatus = pm.iterationData.get(\"programStatus\");",
+                  "//     pm.expect(responseData.programStatus)",
+                  "//       .to.eql(expectedStatus.toLowerCase());",
+                  "// });",
+                  "",
+                  "// //  programStatus is exactly \"Active\" (case-sensitive)",
+                  "// pm.test(\"Program Status is exactly 'Active'\", function () {",
+                  "//     pm.expect(responseData.programStatus).to.eql(\"Active\");",
+                  "// });",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Max ProgramName and Program Description",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post\")) {",
+                  "    console.log(\"Skipping request → testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "console.log(\"Running request positive POST\");",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post_long_pm\"",
+                  "if (!(testType === \"positive\" && requestType === \"post_long_pm\")) {",
+                  "    console.log(\"Skipping 200-status tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/deletebyprogid/{{program_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "deletebyprogid",
+                "{{program_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program with Mixed Case Program Status",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post\") {",
+                  "console.log(\"The testtype is mixed case\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType is mixed case\"+pm.iterationData.get(\"requestType\"))",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "",
+                  "",
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Store programId for delete",
+                  "pm.collectionVariables.set(\"program_id\", responseData.programId);",
+                  "",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Add New Program with Mixed Case Program Status(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Add New Program Active StatusAdd New Program with Mixed Case Program Status:\", responseData);",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "//  programStatus matches iteration data (case-insensitive)",
+                  "pm.test(\"Program Status matches iteration data (case-insensitive)\", function () {",
+                  "    const expectedStatus = pm.iterationData.get(\"programStatus\");",
+                  "    pm.expect(responseData.programStatus.toLowerCase())",
+                  "      .to.eql(expectedStatus.toLowerCase());",
+                  "});",
+                  "",
+                  "//  programStatus is exactly \"Active\" (case-sensitive)",
+                  "pm.test(\"Program Status is exactly 'Active'\", function () {",
+                  "    pm.expect(responseData.programStatus).to.eql(\"Active\");",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Mixed Case Program Status",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post\")) {",
+                  "    console.log(\"Skipping request → testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "console.log(\"Running request positive POST\");",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post\")) {",
+                  "    console.log(\"Skipping 200-status tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/deletebyprogid/{{program_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "deletebyprogid",
+                "{{program_id}}"
+              ]
+            }
+          },
+          "response": []
         }
       ],
       "event": [
@@ -1238,6 +1912,262 @@
               "path": [
                 "lms",
                 "batches"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Class Module",
+      "item": [
+        {
+          "name": "Get All Class List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allClasses",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allClasses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Recording by Batch_ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/batchRecordings/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "batchRecordings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get_Class_Details_By_ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/class/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "class",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class Chaining",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// pm.test(\"Status code is 201\", function () {\r",
+                  "//     pm.response.to.have.status(201);\r",
+                  "// });\r",
+                  "// pm.test(\"Response has csId\", function () {\r",
+                  "//     var jsonData = pm.response.json();\r",
+                  "//     pm.expect(jsonData.csId).to.exist;\r",
+                  "// });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-24\",\r\n  \"classDescription\": \"API Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"API Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class Invalid Endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": 168,\r\n  \"batchName\": \"teamoneQHbkd_1\",\r\n  \"classComments\": \"Advanced session\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"SQL CTE, Triggers, SP\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 5,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"SQL Advanced\",\r\n  \"classScheduledDates\": [\"2026-04-27\",\"2026-04-28\",\"2026-04-29\",\"2026-04-30\",\"2026-05-01\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassschedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassschedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Classes By Staffid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/classesByStaff/U159",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classesByStaff",
+                "U159"
               ]
             }
           },
@@ -1432,367 +2362,6 @@
               "path": [
                 "users",
                 "roleStatus"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Class Module",
-      "item": [
-        {
-          "name": "Get All Class List",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allClasses",
-              "protocol": "https",
-              "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
-              ],
-              "path": [
-                "lms",
-                "allClasses"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Class Recording by Batch_ID",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/batchRecordings/1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "batchRecordings",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get_Class_Details_By_ID",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/class/5",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "class",
-                "5"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Add New Class Chaining",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});\r",
-                  "pm.test(\"Response has csId\", function () {\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.csId).to.exist;\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-24\",\r\n  \"classDescription\": \"API Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"API Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/CreateClassSchedule",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "CreateClassSchedule"
-              ]
-            }
-          },
-          "response": [
-            {
-              "name": "Add New Class Chaining",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-24\",\r\n  \"classDescription\": \"API Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"API Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/CreateClassSchedule",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "CreateClassSchedule"
-                  ]
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "_postman_previewlanguage": "Text",
-              "header": [
-                {
-                  "key": "Cache-Control",
-                  "value": "no-cache, no-store, max-age=0, must-revalidate"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                },
-                {
-                  "key": "Date",
-                  "value": "Sat, 18 Apr 2026 03:07:31 GMT"
-                },
-                {
-                  "key": "Expires",
-                  "value": "0"
-                },
-                {
-                  "key": "Nel",
-                  "value": "{\"report_to\":\"heroku-nel\",\"response_headers\":[\"Via\"],\"max_age\":3600,\"success_fraction\":0.01,\"failure_fraction\":0.1}"
-                },
-                {
-                  "key": "Pragma",
-                  "value": "no-cache"
-                },
-                {
-                  "key": "Report-To",
-                  "value": "{\"group\":\"heroku-nel\",\"endpoints\":[{\"url\":\"https://nel.heroku.com/reports?s=%2B8pbmKZ0kxa%2Fgdr7GFHLujD3D0NY8khSulON2JSGBhs%3D\\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\\u0026ts=1776481651\"}],\"max_age\":3600}"
-                },
-                {
-                  "key": "Reporting-Endpoints",
-                  "value": "heroku-nel=\"https://nel.heroku.com/reports?s=%2B8pbmKZ0kxa%2Fgdr7GFHLujD3D0NY8khSulON2JSGBhs%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1776481651\""
-                },
-                {
-                  "key": "Server",
-                  "value": "Heroku"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000 ; includeSubDomains"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Access-Control-Request-Method"
-                },
-                {
-                  "key": "Vary",
-                  "value": "Access-Control-Request-Headers"
-                },
-                {
-                  "key": "Via",
-                  "value": "1.1 heroku-router"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "DENY"
-                },
-                {
-                  "key": "X-Xss-Protection",
-                  "value": "0"
-                },
-                {
-                  "key": "Content-Length",
-                  "value": "365"
-                }
-              ],
-              "cookie": [],
-              "body": "{\n    \"csId\": 85,\n    \"batchId\": 192,\n    \"classNo\": 1,\n    \"classDate\": \"2026-04-24T00:00:00.000+00:00\",\n    \"classTopic\": \"API Basics\",\n    \"classStatus\": \"Active\",\n    \"classStaffId\": \"U159\",\n    \"classDescription\": \"API Intro\",\n    \"classComments\": \"Basic session\",\n    \"classNotes\": \"Notes link\",\n    \"classRecordingPath\": \"recording_url\",\n    \"batchName\": \"teamoneQHbkd_587\",\n    \"classScheduledDates\": [\n        \"2026-04-24T00:00:00.000+00:00\"\n    ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Add New Class Invalid Endpoint",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"batchId\": 168,\r\n  \"batchName\": \"teamoneQHbkd_1\",\r\n  \"classComments\": \"Advanced session\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"SQL CTE, Triggers, SP\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 5,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"SQL Advanced\",\r\n  \"classScheduledDates\": [\"2026-04-27\",\"2026-04-28\",\"2026-04-29\",\"2026-04-30\",\"2026-05-01\"]\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/CreateClassschedule",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "CreateClassschedule"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Classes By Staffid",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/classesByStaff/U159",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "classesByStaff",
-                "U159"
               ]
             }
           },
