@@ -804,8 +804,7 @@
                   "// Store programId for delete",
                   "pm.collectionVariables.set(\"program_id\", responseData.programId);",
                   "",
-                  "  // Save programName",
-                  "    pm.collectionVariables.set(\"program_name\", responseData.programName);",
+                  "  ",
                   "",
                   "// Log request + response",
                   "console.log(\"FINAL REQUEST BODY (Positive):\", JSON.parse(pm.request.body.raw));",
@@ -1593,6 +1592,8 @@
                   "",
                   "// Store programId for delete",
                   "pm.collectionVariables.set(\"program_id\", responseData.programId);",
+                  "// Save programName",
+                  "    pm.collectionVariables.set(\"program_name\", responseData.programName);",
                   "",
                   "// Log request + response",
                   "console.log(\"FINAL REQUEST BODY Add New Program with Mixed Case Program Status(Positive):\", JSON.parse(pm.request.body.raw));",
@@ -1655,6 +1656,452 @@
               "path": [
                 "lms",
                 "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Program by ProgramId",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"update_by_program_id\") {",
+                  "console.log(\"The testtype is mixed case\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType for update by program ID case\"+pm.iterationData.get(\"requestType\"))",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"update_by_program_id\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "const updated = pm.response.json();",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Update Program by ProgramId(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Update Update Program by ProgramId:\", updated);",
+                  "",
+                  "",
+                  "",
+                  "const updateSchema = {",
+                  "  type: \"object\",",
+                  "  required: [",
+                  "    \"programId\",",
+                  "    \"programName\",",
+                  "    \"programDescription\",",
+                  "    \"programStatus\",",
+                  "    \"creationTime\",",
+                  "    \"lastModTime\"",
+                  "  ],",
+                  "  properties: {",
+                  "    programId: { type: \"number\" },",
+                  "    programName: { type: \"string\" },",
+                  "    programDescription: { type: \"string\" },",
+                  "    programStatus: {",
+                  "      type: \"string\",",
+                  "      enum: [\"Active\", \"Inactive\"]",
+                  "    },",
+                  "    creationTime: {",
+                  "      type: \"string\",",
+                  "      format: \"date-time\"",
+                  "    },",
+                  "    lastModTime: {",
+                  "      type: \"string\",",
+                  "      format: \"date-time\"",
+                  "    }",
+                  "  },",
+                  "  additionalProperties: false",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "    pm.expect(updated).to.have.jsonSchema(updateSchema);",
+                  "});",
+                  "",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    pm.expect(updated.programId).to.be.a(\"number\");",
+                  "    pm.expect(updated.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programName is valid\", function () {",
+                  "    pm.expect(updated.programName).to.be.a(\"string\");",
+                  "    pm.expect(updated.programName.trim().length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription is valid\", function () {",
+                  "    pm.expect(updated.programDescription).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"programName has no invalid characters\", function () {",
+                  "    const regex = /^[A-Za-z][A-Za-z0-9,\\-:._ ]*$/;",
+                  "    pm.expect(regex.test(updated.programName)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription has no invalid characters\", function () {",
+                  "    const regex = /^[A-Za-z][A-Za-z0-9,\\-:._ ]*$/;",
+                  "    pm.expect(regex.test(updated.programDescription)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"programStatus is valid\", function () {",
+                  "    pm.expect([\"Active\", \"Inactive\"]).to.include(updated.programStatus);",
+                  "});",
+                  "",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(updated.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(updated.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(updated.lastModTime))",
+                  "        .to.be.at.least(Date.parse(updated.creationTime));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/putprogram/{{program_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "putprogram",
+                "{{program_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Program by ProgramName",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"update\") {",
+                  "console.log(\"The testtype is mixed case\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType for update by program name case\"+pm.iterationData.get(\"requestType\"))",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"update\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "const updated = pm.response.json();",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Update Program by ProgramName(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Update Program by ProgramName:\", updated);",
+                  "",
+                  "",
+                  "",
+                  "const updateSchema = {",
+                  "  type: \"object\",",
+                  "  required: [",
+                  "    \"programId\",",
+                  "    \"programName\",",
+                  "    \"programDescription\",",
+                  "    \"programStatus\",",
+                  "    \"creationTime\",",
+                  "    \"lastModTime\"",
+                  "  ],",
+                  "  properties: {",
+                  "    programId: { type: \"number\" },",
+                  "    programName: { type: \"string\" },",
+                  "    programDescription: { type: \"string\" },",
+                  "    programStatus: {",
+                  "      type: \"string\",",
+                  "      enum: [\"Active\", \"Inactive\"]",
+                  "    },",
+                  "    creationTime: {",
+                  "      type: \"string\",",
+                  "      format: \"date-time\"",
+                  "    },",
+                  "    lastModTime: {",
+                  "      type: \"string\",",
+                  "      format: \"date-time\"",
+                  "    }",
+                  "  },",
+                  "  additionalProperties: false",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches JSON schema\", function () {",
+                  "    pm.expect(updated).to.have.jsonSchema(updateSchema);",
+                  "});",
+                  "",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    pm.expect(updated.programId).to.be.a(\"number\");",
+                  "    pm.expect(updated.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programName is valid\", function () {",
+                  "    pm.expect(updated.programName).to.be.a(\"string\");",
+                  "    pm.expect(updated.programName.trim().length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription is valid\", function () {",
+                  "    pm.expect(updated.programDescription).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"programName has no invalid characters\", function () {",
+                  "    const regex = /^[A-Za-z][A-Za-z0-9,\\-:._ ]*$/;",
+                  "    pm.expect(regex.test(updated.programName)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"programDescription has no invalid characters\", function () {",
+                  "    const regex = /^[A-Za-z][A-Za-z0-9,\\-:._ ]*$/;",
+                  "    pm.expect(regex.test(updated.programDescription)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"programStatus is valid\", function () {",
+                  "    pm.expect([\"Active\", \"Inactive\"]).to.include(updated.programStatus);",
+                  "});",
+                  "",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(updated.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(updated.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(updated.lastModTime))",
+                  "        .to.be.at.least(Date.parse(updated.creationTime));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/program/{{program_name}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "program",
+                "{{program_name}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Program By ProgramName Invalid endpoint",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"update_invalid_endpoint\") {",
+                  "console.log(\"The testtype is mixed case\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType for update by program name case\"+pm.iterationData.get(\"requestType\"))",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"update_invalid_endpoint\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "// Log request ",
+                  "console.log(\"FINAL REQUEST BODY Update Program By ProgramName Invalid endpoint(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "",
+                  "",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/{{end_point}}/{{program_name}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "{{end_point}}",
+                "{{program_name}}"
               ]
             }
           },
