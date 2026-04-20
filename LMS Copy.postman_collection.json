@@ -1,0 +1,1655 @@
+{
+  "info": {
+    "_postman_id": "bec59b9d-15b9-460e-86f0-e48fec6a6aac",
+    "name": "LMS Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8806598"
+  },
+  "item": [
+    {
+      "name": "User Login Controller",
+      "item": [
+        {
+          "name": "User Sign In",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "const lms_token = responseData.token;",
+                  "pm.collectionVariables.set(\"lms_access_token\",lms_token);",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field token\",function(){",
+                  "    pm.expect(responseData).to.have.property('token');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field Type\",function(){",
+                  "    pm.expect(responseData).to.have.property('type');",
+                  "});",
+                  "pm.test(\"Response to have the field userID\",function(){",
+                  "    pm.expect(responseData).to.have.property('userId');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field email\",function(){",
+                  "    pm.expect(responseData).to.have.property('email');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field roles\",function(){",
+                  "    pm.expect(responseData).to.have.property('roles');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field status\",function(){",
+                  "    pm.expect(responseData).to.have.property('status');",
+                  "});",
+                  "",
+                  "pm.test(\"Response to have the field password\",function(){",
+                  "    pm.expect(responseData).to.have.property('passwordExpired')",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for Token\", function () {",
+                  "    pm.expect(responseData.token).to.be.a('string');",
+                  "});",
+                  "pm.test(\"validating response body data type for Type\", function () {",
+                  "    pm.expect(responseData.type).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for userID\", function () {",
+                  "      pm.expect(responseData.userId).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for email\", function () {",
+                  "   pm.expect(responseData.email).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for roles\", function () {",
+                  " pm.expect(responseData.roles).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for status\", function () {",
+                  "    pm.expect(responseData.status).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for passwordExpired\", function () {",
+                  "    pm.expect(responseData.passwordExpired).to.be.a('boolean');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\"password\": \"Team01@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Sign Bad request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Responsebody matches string for the Message: Json parse error \", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");",
+                  "});",
+                  "",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"false\");",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Sign Invalid enpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail.com\",\n\"password\": \"Team01@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login/",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Logout successful\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"Logout successful\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logoutlms",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "logoutlms"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Invalid endpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 405\", function () {\r",
+                  "    pm.response.to.have.status(405);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ResponseBody matches string for the Message: Request method 'GET' is not supported \", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"Request method 'GET' is not supported\");\r",
+                  "\r",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"false\");\r",
+                  "});\r",
+                  "\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logout",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Program Module",
+      "item": [
+        {
+          "name": "GET All Programs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allPrograms",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allPrograms"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET All Programs with Users",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{vault:authorization-secret}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allProgramsWithUsers",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allProgramsWithUsers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program Chanining",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Check status",
+                  "if (pm.response.code === 201) {",
+                  "    const responseData = pm.response.json();",
+                  "",
+                  "    // Save programId",
+                  "    pm.collectionVariables.set(\"programIdChaining\", responseData.programId);",
+                  "",
+                  "    // Save programName",
+                  "    pm.collectionVariables.set(\"programNameChaining\", responseData.programName);",
+                  "",
+                  "    console.log(\"Saved programId:\", responseData.programId);",
+                  "    console.log(\"Saved programName:\", responseData.programName);",
+                  "} else {",
+                  "    console.log(\"Program not created. Status:\", pm.response.code);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "const programName = \"teamone\" + randomLetters(5);",
+                  "",
+                  "pm.variables.set(\"programName\", programName);",
+                  "",
+                  "console.log(\"Generated Program Name:\", programName);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"programDescription\": \"Auto generated program\",\n  \"programName\": \"{{programName}}\",\n  \"programStatus\": \"active\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program Active Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Store programId for delete",
+                  "pm.collectionVariables.set(\"program_id\", responseData.programId);",
+                  "",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY (Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Add New Program Active Status:\", responseData);",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// 2. programId exists",
+                  "pm.test(\"programId is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"programId\");",
+                  "});",
+                  "",
+                  "// 3. programId is numeric and > 0",
+                  "pm.test(\"programId is numeric and positive\", function () {",
+                  "    pm.expect(responseData.programId).to.be.a(\"number\");",
+                  "    pm.expect(responseData.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 4. programName matches request",
+                  "pm.test(\"Program Name matches request\", function () {",
+                  "    pm.expect(responseData.programName).to.eql(pm.variables.get(\"programName\"));",
+                  "});",
+                  "",
+                  "// 5. programName is not empty",
+                  "pm.test(\"Program Name is not empty\", function () {",
+                  "    pm.expect(responseData.programName.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 6. programDescription matches request",
+                  "pm.test(\"Program Description matches request\", function () {",
+                  "    pm.expect(responseData.programDescription).to.eql(pm.variables.get(\"programDescription\"));",
+                  "});",
+                  "",
+                  "// 7. programDescription is not empty",
+                  "pm.test(\"Program Description is not empty\", function () {",
+                  "    pm.expect(responseData.programDescription.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 8. programStatus is Active",
+                  "pm.test(\"Program Status is Active\", function () {",
+                  "    pm.expect(responseData.programStatus).to.eql(\"Active\");",
+                  "});",
+                  "",
+                  "// 9. creationTime exists",
+                  "pm.test(\"creationTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"creationTime\");",
+                  "});",
+                  "",
+                  "// 10. creationTime is valid ISO timestamp",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 11. lastModTime exists",
+                  "pm.test(\"lastModTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"lastModTime\");",
+                  "});",
+                  "",
+                  "// 12. lastModTime is valid ISO timestamp",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 13. lastModTime >= creationTime",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime))",
+                  "      .to.be.at.least(Date.parse(responseData.creationTime));",
+                  "});",
+                  "",
+                  "// 14. Response contains only expected keys",
+                  "pm.test(\"Response contains only expected fields\", function () {",
+                  "    const expectedKeys = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "    pm.expect(Object.keys(responseData)).to.have.members(expectedKeys);",
+                  "});",
+                  "// JSON Schema for Add New Program Active Status response",
+                  "const programSchema = {",
+                  "    type: \"object\",",
+                  "    required: [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ],",
+                  "    properties: {",
+                  "        programId: { type: \"number\" },",
+                  "        programName: { type: \"string\" },",
+                  "        programDescription: { type: \"string\" },",
+                  "        programStatus: { type: \"string\" },",
+                  "        creationTime: { type: \"string\" },",
+                  "        lastModTime: { type: \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "// Schema validation",
+                  "pm.test(\"Response matches expected schema\", function () {",
+                  "    pm.expect(responseData).to.have.jsonSchema(programSchema);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.info.iteration === 0) {",
+                  "",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    pm.variables.set(\"programName\", \"Name-\" + randomLetters(6));",
+                  "    pm.variables.set(\"programDescription\", \"Pgm-\" + randomLetters(10));",
+                  "    pm.variables.set(\"programStatus\", \"Active\");",
+                  "",
+                  "    console.log(\"POSITIVE → programName:\", pm.variables.get(\"programName\"));",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program InActive Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Log response",
+                  "console.log(\"Response Data Add New Program InActive Status:\", responseData);",
+                  "",
+                  "// Store programId for delete",
+                  "pm.collectionVariables.set(\"inactive_pgm_id\", responseData.programId);",
+                  "",
+                  "// Log request body",
+                  "console.log(\"FINAL REQUEST BODY (Negative):\", JSON.parse(pm.request.body.raw));",
+                  "",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// 2. programName matches generated value",
+                  "pm.test(\"Program Name matches generated value\", function () {",
+                  "    pm.expect(responseData.programName).to.eql(pm.variables.get(\"programName\"));",
+                  "});",
+                  "",
+                  "// 3. programName is not empty",
+                  "pm.test(\"Program Name is not empty\", function () {",
+                  "    pm.expect(responseData.programName.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 4. programDescription matches CSV",
+                  "pm.test(\"Program Description matches CSV\", function () {",
+                  "    pm.expect(responseData.programDescription)",
+                  "      .to.eql(pm.iterationData.get(\"programDescription\"));",
+                  "});",
+                  "",
+                  "// 5. programDescription is not empty",
+                  "pm.test(\"Program Description is not empty\", function () {",
+                  "    pm.expect(responseData.programDescription.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 6. programStatus matches CSV (Inactive)",
+                  "pm.test(\"Program Status matches CSV\", function () {",
+                  "    pm.expect(responseData.programStatus)",
+                  "      .to.eql(pm.iterationData.get(\"programStatus\"));",
+                  "});",
+                  "",
+                  "// 7. programId exists and is numeric",
+                  "pm.test(\"programId is present and numeric\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"programId\");",
+                  "    pm.expect(responseData.programId).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "// 8. programId is positive",
+                  "pm.test(\"programId is positive\", function () {",
+                  "    pm.expect(responseData.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 9. creationTime exists",
+                  "pm.test(\"creationTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"creationTime\");",
+                  "    pm.expect(responseData.creationTime).to.not.be.null;",
+                  "});",
+                  "",
+                  "// 10. creationTime is valid ISO timestamp",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 11. lastModTime exists",
+                  "pm.test(\"lastModTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"lastModTime\");",
+                  "    pm.expect(responseData.lastModTime).to.not.be.null;",
+                  "});",
+                  "",
+                  "// 12. lastModTime is valid ISO timestamp",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 13. lastModTime >= creationTime",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime))",
+                  "      .to.be.at.least(Date.parse(responseData.creationTime));",
+                  "});",
+                  "",
+                  "// 14. Response contains only expected fields",
+                  "pm.test(\"Response contains only expected fields\", function () {",
+                  "    const expectedKeys = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "    pm.expect(Object.keys(responseData)).to.have.members(expectedKeys);",
+                  "});",
+                  "",
+                  "// 15. Schema validation",
+                  "const negativeProgramSchema = {",
+                  "    type: \"object\",",
+                  "    required: [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ],",
+                  "    properties: {",
+                  "        programId: { type: \"number\" },",
+                  "        programName: { type: \"string\" },",
+                  "        programDescription: { type: \"string\" },",
+                  "        programStatus: { type: \"string\" },",
+                  "        creationTime: { type: \"string\" },",
+                  "        lastModTime: { type: \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Response matches expected schema\", function () {",
+                  "    pm.expect(responseData).to.have.jsonSchema(negativeProgramSchema);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"negative\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post\") {",
+                  "",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(5);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"NEGATIVE  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\": \"{{programStatus}}\"\n}\n\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Active Program By ProgramID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// 2. Parse response text",
+                  "const responseText = pm.response.text();",
+                  "console.log(\"Delete Active Program Response:\", responseText);",
+                  "",
+                  "// 3. Validate programId was passed correctly",
+                  "pm.test(\"programId was passed correctly\", function () {",
+                  "    pm.expect(pm.variables.get(\"programId\")).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "// 4. Validate success message contains 'deleted'",
+                  "pm.test(\"Success message contains 'deleted'\", function () {",
+                  "    pm.expect(responseText.toLowerCase()).to.include(\"deleted\");",
+                  "});",
+                  "",
+                  "// 5. Validate success message contains the correct programId",
+                  "pm.test(\"Success message contains correct programId\", function () {",
+                  "    const id = pm.variables.get(\"programId\");",
+                  "    pm.expect(responseText).to.include(id.toString());",
+                  "});",
+                  "",
+                  "// 6. Validate message format ",
+                  "pm.test(\"Success message follows expected format\", function () {",
+                  "    const id = pm.variables.get(\"programId\");",
+                  "    const expected = `Message: Program Id-${id} is deleted Successfully!`;",
+                  "    pm.expect(responseText.trim()).to.eql(expected);",
+                  "});",
+                  "",
+                  "",
+                  "// 7. Validate response time",
+                  "pm.test(\"Response time < 1s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Only run on iteration 0 (positive test)",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping Delete Active — not iteration 0\");",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "const id = pm.collectionVariables.get(\"program_id\");",
+                  "",
+                  "if (!id) {",
+                  "    console.log(\"Skipping Delete Active — program_id not found\");",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "pm.variables.set(\"programId\", id);",
+                  "console.log(\"Deleting ACTIVE program:\", id);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/deletebyprogid/{{program_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "deletebyprogid",
+                "{{program_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete InActive Program By ProgramID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "// Parse response",
+                  "const responseData = pm.response.json();",
+                  "console.log(\"RESPONSE for Delete InActive Program:\", responseData);",
+                  "",
+                  "// 2. Validate programId was passed correctly",
+                  "const id = pm.variables.get(\"programId\");",
+                  "pm.test(\"programId was passed correctly\", function () {",
+                  "    pm.expect(id).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "// 3. Validate message contains expected CSV text",
+                  "pm.test(\"Error message contains expected CSV message\", function () {",
+                  "    const expectedMsg = pm.iterationData.get(\"expectedMessage\");",
+                  "    pm.expect(responseData.message).to.include(expectedMsg);",
+                  "});",
+                  "",
+                  "// 4. Validate message contains programId",
+                  "pm.test(\"Error message contains programId\", function () {",
+                  "    pm.expect(responseData.message).to.include(id.toString());",
+                  "});",
+                  "",
+                  "// 5. Validate success flag matches CSV",
+                  "pm.test(\"Success flag matches CSV\", function () {",
+                  "    console.log(\"expectedSuccess RAW:\", pm.iterationData.get(\"expectedSuccess\"));",
+                  "    const expectedSuccess = pm.iterationData.get(\"expectedSuccess\");",
+                  "    pm.expect(responseData.success.toString()).to.eql(expectedSuccess.toString());",
+                  "});",
+                  "",
+                  "// 6. Validate response contains only expected fields",
+                  "",
+                  "",
+                  "pm.test(\"Response contains only expected fields\", function () {",
+                  "    const expectedKeys = [\"message\", \"success\"];",
+                  "    pm.expect(Object.keys(responseData)).to.have.members(expectedKeys);",
+                  "});",
+                  "",
+                  "// 7. Validate response time",
+                  "pm.test(\"Response time < 1s\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// 8. Schema validation",
+                  "const deleteInactiveSchema = {",
+                  "    type: \"object\",",
+                  "    required: [\"message\", \"success\"],",
+                  "    properties: {",
+                  "        message: { type: \"string\" },",
+                  "        success: { type: \"boolean\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Response matches expected schema\", function () {",
+                  "    pm.expect(responseData).to.have.jsonSchema(deleteInactiveSchema);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Only run for negative CSV rows",
+                  "if (pm.iterationData.get(\"testType\") !== \"negative\") {",
+                  "    console.log(\"Skipping Delete Inactive — not a negative row\");",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "const id = pm.collectionVariables.get(\"inactive_pgm_id\");",
+                  "",
+                  "if (!id) {",
+                  "    console.log(\"Skipping Delete Inactive — inactive_pgm_id not found\");",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "pm.variables.set(\"programId\", id);",
+                  "console.log(\"Deleting INACTIVE program:\", id);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/deletebyprogid/{{inactive_pgm_id}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "deletebyprogid",
+                "{{inactive_pgm_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "if (pm.iterationData.get(\"moduleType\") !== \"Program\") {",
+              "    postman.setNextRequest(null);",
+              "    return;",
+              "}",
+              "",
+              "pm.variables.set(\"randomLettersFunction\", `",
+              "    (length) => {",
+              "        const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\";",
+              "        let result = \"\";",
+              "        for (let i = 0; i < length; i++) {",
+              "            result += chars.charAt(Math.floor(Math.random() * chars.length));",
+              "        }",
+              "        return result;",
+              "    }",
+              "`);",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Program Batch Module",
+      "item": [
+        {
+          "name": "GET All Batches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/batches",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "batches"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Module",
+      "item": [
+        {
+          "name": "Create  single user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userComments\": \"New user created for testing\",\r\n\"userEduPg\": \"MS\",\r\n\"userEduUg\":\"BTech\",\r\n\"userFirstName\":\"John\",\r\n\"userLastName\": \"Doe\",\r\n\"userMiddleName\": \"A\",\r\n\"userPhoneNumber\": \"+1 4251234567\",\r\n\"userLinkedinUrl\": \"http://www.linkedin.com/john-doe\",\r\n\"userLocation\": \"Seattle\",\r\n\"userLogin\": {\r\n\"loginStatus\" : \"Active\",\r\n\"userLoginEmail\": \"testemail@gmail.com\"\r\n},\r\n\"userRoleMaps\": [\r\n{\r\n\"roleId\": \"R03\",\r\n\"userRoleStatus\": \"Active\"\r\n}\r\n],\r\n\"userTimeZone\": \"PST\",\r\n\"userVisaStatus\": \"H1B\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleStatus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create  single user with role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "const userId = response.user.userId;",
+                  "const roleId = response.roles[0].roleId;",
+                  "pm.collectionVariables.set(\"userId\", userId);",
+                  "console.log(\"Saved userId:\",userId);",
+                  "console.log(\"Found roleId\", roleId);",
+                  "",
+                  "if (roleId === \"R01\") {",
+                  "    pm.collectionVariables.set(\"adminId\", userId);",
+                  "    console.log(\"Assigned as Admin\");",
+                  "} else if (roleId === \"R02\") {",
+                  "    pm.collectionVariables.set(\"staffId\", userId);",
+                  "    console.log(\"Assigned as Staff\");",
+                  "} else if (roleId === \"R03\") {",
+                  "    pm.collectionVariables.set(\"studentId\", userId);",
+                  "    console.log(\"Assigned as Student\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userComments\": \"New user with role1 created for testing\",\r\n\"userEduPg\": \"MTech\",\r\n\"userEduUg\":\"BSc\",\r\n\"userFirstName\":\"Steve\",\r\n\"userLastName\": \"Doug\",\r\n\"userMiddleName\": \"A\",\r\n\"userPhoneNumber\": \"+1 6666666666\",\r\n\"userLinkedinUrl\": \"http://www.linkedin.com/steve-doug\",\r\n\"userLocation\": \"Los Angeles\",\r\n\"userLogin\": {\r\n\"loginStatus\" : \"Active\",\r\n\"userLoginEmail\": \"test6666@gmail.com\"\r\n},\r\n\"userRoleMaps\": [\r\n{\r\n\"roleId\": \"R01\",\r\n\"userRoleStatus\": \"Active\"\r\n}\r\n],\r\n\"userTimeZone\": \"PST\",\r\n\"userVisaStatus\": \"US-Citizen\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleStatus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Creating multiple users with Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"moduleType\") !== \"User\") {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    return;",
+                  "}",
+                  "const res = pm.response.json();",
+                  "const roleId = pm.iterationData.get(\"roleId\");",
+                  "",
+                  "pm.test(\"Status code is 201 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "   const userId = res.user.userId;",
+                  "    pm.collectionVariables.set(\"userId\", userId);",
+                  "",
+                  "     // 2. Assign to the correct role variable",
+                  "    const roleVarMap = { \"R01\": \"adminId\", \"R02\": \"staffId\", \"R03\": \"studentId\" };",
+                  "    const targetVar = roleVarMap[roleId];",
+                  "",
+                  "    if (targetVar) {",
+                  "        pm.collectionVariables.set(targetVar, userId);",
+                  "        console.log(`Success! Saved ${targetVar}: ${userId}`);",
+                  "    }",
+                  "} else if (pm.response.code === 400) {",
+                  "    // Log why it failed to the console",
+                  "    console.error(\"Validation Errors:\", res);",
+                  "    ",
+                  "",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userComments\": \"{{userComments}}\",\r\n  \"userEduPg\": \"{{userEduPg}}\",\r\n  \"userEduUg\": \"{{userEduUg}}\",\r\n  \"userFirstName\": \"{{userFirstName}}\",\r\n  \"userLastName\": \"{{userLastName}}\",\r\n  \"userMiddleName\": \"{{userMiddleName}}\",\r\n  \"userPhoneNumber\": \"{{userPhoneNumber}}\",\r\n  \"userLinkedinUrl\": \"{{userLinkedinUrl}}\",\r\n  \"userLocation\": \"{{userLocation}}\",\r\n  \"userLogin\": {\r\n    \"loginStatus\": \"{{loginStatus}}\",\r\n    \"userLoginEmail\": \"{{userLoginEmail}}\"\r\n  },\r\n  \"userRoleMaps\": [\r\n    {\r\n      \"roleId\": \"{{roleId}}\",\r\n      \"userRoleStatus\": \"{{userRoleStatus}}\"\r\n    }\r\n  ],\r\n  \"userTimeZone\": \"{{userTimeZone}}\",\r\n  \"userVisaStatus\": \"{{userVisaStatus}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleStatus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    const user = jsonData[0];\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"userId\");\r",
+                  "    pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(user).to.have.property(\"userPhoneNumber\");\r",
+                  "    pm.expect(user).to.have.property(\"userLocation\");\r",
+                  "    pm.expect(user).to.have.property(\"userTimeZone\");\r",
+                  "    pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/users",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Class Module",
+      "item": [
+        {
+          "name": "Get All Class List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allClasses",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "allClasses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "lms_access_token",
+      "value": "{{vault:json-web-token}}"
+    },
+    {
+      "key": "baseUrl",
+      "value": "https://lms-hackathon-api-april\n-2026-8b55b53c8fab.herokuap\np.com/lms"
+    },
+    {
+      "key": "BatchId",
+      "value": ""
+    },
+    {
+      "key": "BatchName",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "staffId",
+      "value": ""
+    },
+    {
+      "key": "studentId",
+      "value": ""
+    }
+  ]
+}

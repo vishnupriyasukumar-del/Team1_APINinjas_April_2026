@@ -1,6 +1,10 @@
 {
   "info": {
+<<<<<<< Updated upstream
     "_postman_id": "db5786fe-45eb-40d9-a32c-55e74470b9de",
+=======
+    "_postman_id": "bec59b9d-15b9-460e-86f0-e48fec6a6aac",
+>>>>>>> Stashed changes
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53617151",
@@ -5431,73 +5435,53 @@
           "response": []
         },
         {
-          "name": "Creating user with Role",
+          "name": "Create  single user with role",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "if (pm.iterationData.get(\"moduleType\") !== \"User\") {",
-                  "    postman.setNextRequest(null);",
-                  "    return;",
-                  "}",
-                  "let res = pm.response.json();",
-                  "",
                   "pm.test(\"Status code is 201 or 400\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
                   "});",
                   "",
+                  "console.log(\"Create user response:\", pm.response.json());",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
                   "if (pm.response.code === 201) {",
-                  "",
-                  "    pm.test(\"User object exists\", function () {",
-                  "        pm.expect(res).to.have.property(\"user\");",
+                  "    pm.test(\"Response contains user and roles\", function () {",
+                  "        pm.expect(response).to.have.property(\"user\");",
+                  "        pm.expect(response).to.have.property(\"roles\");",
                   "    });",
                   "",
-                  "    pm.test(\"Roles array exists\", function () {",
-                  "        pm.expect(res).to.have.property(\"roles\");",
-                  "        pm.expect(res.roles).to.be.an(\"array\").that.is.not.empty;",
-                  "    });",
                   "",
-                  "    pm.test(\"User fields are present\", function () {",
-                  "        pm.expect(res.user).to.have.property(\"userId\");",
-                  "        pm.expect(res.user).to.have.property(\"userFirstName\");",
-                  "        pm.expect(res.user).to.have.property(\"userLastName\");",
-                  "        pm.expect(res.user).to.have.property(\"userPhoneNumber\");",
-                  "        pm.expect(res.user).to.have.property(\"userLocation\");",
-                  "        pm.expect(res.user).to.have.property(\"userLinkedinUrl\");",
-                  "        pm.expect(res.user).to.have.property(\"userEduUg\");",
-                  "        pm.expect(res.user).to.have.property(\"userEduPg\");",
-                  "        pm.expect(res.user).to.have.property(\"userComments\");",
-                  "        pm.expect(res.user).to.have.property(\"userVisaStatus\");",
-                  "        pm.expect(res.user).to.have.property(\"userLoginEmail\");",
-                  "    });",
+                  "    const userId = response.user.userId;",
+                  "    const roleId = response.roles[0].roleId;",
+                  "    pm.collectionVariables.set(\"userId\", userId);",
+                  "    console.log(\"Saved userId:\", userId);",
+                  "    console.log(\"Found roleId\", roleId);",
                   "",
-                  "    pm.test(\"User ID format is valid (U + number)\", function () {",
-                  "        pm.expect(res.user.userId).to.match(/^U\\d+$/);",
-                  "    });",
+                  "    if (roleId === \"R01\") {",
+                  "        pm.collectionVariables.set(\"adminId\", userId);",
+                  "        console.log(\"Assigned as Admin\");",
+                  "    } else if (roleId === \"R02\") {",
+                  "        pm.collectionVariables.set(\"staffId\", userId);",
+                  "        console.log(\"Assigned as Staff\");",
+                  "    } else if (roleId === \"R03\") {",
+                  "        pm.collectionVariables.set(\"studentId\", userId);",
+                  "        console.log(\"Assigned as Student\");",
+                  "    }",
                   "}",
-                  "",
                   "if (pm.response.code === 400) {",
                   "",
-                  "    pm.test(\"Error message contains phone number exists\", function () {",
-                  "        pm.expect(pm.response.text()).to.include(\"already exists\");",
+                  "    pm.test(\"Error response contains message\", function () {",
+                  "        pm.expect(response).to.have.property(\"message\");",
+                  "        pm.expect(response.success).to.eql(false);",
                   "    });",
                   "",
-                  "    pm.test(\"Response contains success flag or message\", function () {",
-                  "        pm.expect(pm.response.text().length).to.be.greaterThan(0);",
-                  "    });",
-                  "}",
-                  "",
-                  "if (pm.response.code === 201) {",
-                  "    const roleMapping = { \"R01\": \"Admin\", \"R02\": \"Staff\", \"R03\": \"Student\" };",
-                  "    const expectedStatus = roleMapping[pm.iterationData.get(\"roleId\")];",
-                  "",
-                  "    pm.test(\"Role Status matches Mapping (Admin/Staff/Student)\", function () {",
-                  "        pm.expect(res.roles[0].userRoleStatus).to.eql(expectedStatus);",
-                  "    });",
-                  "}",
-                  "",
-                  ""
+                  "    console.log(\"User creation failed:\", response.message);",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -5508,23 +5492,28 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "const roleMapping = {\r",
-                  "    \"R01\": \"Admin\",\r",
-                  "    \"R02\": \"Staff\",\r",
-                  "    \"R03\": \"Student\"\r",
+                  "function randomPhone() {\r",
+                  "    let num = \"\";\r",
+                  "    for (let i = 0; i < 10; i++) {\r",
+                  "        num += Math.floor(Math.random() * 10);\r",
+                  "    }\r",
+                  "    return \"+1 \" + num;\r",
                   "}\r",
                   "\r",
-                  "const csvRoleId = pm.iterationData.get(\"roleId\");\r",
-                  "const assignedStatus = roleMapping[csvRoleId] || \"Active\";\r",
+                  "pm.collectionVariables.set(\"phone\", randomPhone());\r",
                   "\r",
-                  "const roles = [\r",
-                  "    {\r",
-                  "        \"roleId\": csvRoleId,\r",
-                  "        \"userRoleStatus\": assignedStatus\r",
+                  "function randomEmail() {\r",
+                  "    const chars = \"abcdefghijklmnopqrstuvwxyz0123456789\";\r",
+                  "    let name = \"\";\r",
+                  "    for (let i = 0; i < 10; i++) {\r",
+                  "        name += chars.charAt(Math.floor(Math.random() * chars.length));\r",
                   "    }\r",
-                  "];\r",
+                  "    return name + \"@gmail.com\";\r",
+                  "}\r",
                   "\r",
-                  "pm.variables.set(\"roleMapsArray\", JSON.stringify(roles));"
+                  "pm.collectionVariables.set(\"email\", randomEmail());\r",
+                  "console.log(\"Generated email:\", pm.collectionVariables.get(\"email\"));\r",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -5547,7 +5536,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"userFirstName\": \"{{userFirstName}}\",\r\n  \"userLastName\": \"{{userLastName}}\",\r\n  \"userMiddleName\": \"{{userMiddleName}}\",\r\n  \"userPhoneNumber\": \"{{userPhoneNumber}}\",\r\n  \"userLocation\": \"{{userLocation}}\",\r\n  \"userTimeZone\": \"{{userTimeZone}}\",\r\n  \"userVisaStatus\": \"{{userVisaStatus}}\",\r\n  \"userLoginEmail\": \"{{userLoginEmail}}\",\r\n  \"loginStatus\": \"{{loginStatus}}\",\r\n  \"roleId\": \"{{roleId}}\",\r\n  \"userRoleStatus\": \"{{userRoleStatus}}\",\r\n  \"userEduUg\": \"{{userEduUg}}\",\r\n  \"userEduPg\": \"{{userEduPg}}\",\r\n  \"userComments\": \"{{userComments}}\",\r\n  \"userLinkedinUrl\": \"{{userLinkedinUrl}}\"\r\n}\r\n",
+              "raw": "{\r\n\"userComments\": \"New user with role3 created for testing\",\r\n\"userEduPg\": \"MTech\",\r\n\"userEduUg\":\"BTech\",\r\n\"userFirstName\":\"Tom\",\r\n\"userLastName\": \"Noah\",\r\n\"userMiddleName\": \"C\",\r\n\"userPhoneNumber\": \"{{phone}}\",\r\n\"userLinkedinUrl\": \"http://www.linkedin.com/tom-noah\",\r\n\"userLocation\": \"Houston\",\r\n\"userLogin\": {\r\n    \"loginStatus\": \"Active\",\r\n    \"userLoginEmail\": \"{{email}}\"\r\n  },\r\n\"userRoleMaps\": [\r\n{\r\n\"roleId\": \"R03\",\r\n\"userRoleStatus\": \"Active\"\r\n}\r\n],\r\n\"userTimeZone\": \"CST\",\r\n\"userVisaStatus\": \"Canada-Citizen\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -5566,10 +5555,546 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Creating multiple users with Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"moduleType\") !== \"User\") {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    return;",
+                  "}",
+                  "const res = pm.response.json();",
+                  "const roleId = pm.iterationData.get(\"roleId\");",
+                  "",
+                  "pm.test(\"Status code is 201 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    const userId = res.user.userId;",
+                  "    pm.collectionVariables.set(\"userId\", userId);",
+                  "    let targetVar = \"\";",
+                  "",
+                  "    if (roleId === \"R01\") {",
+                  "        targetVar = \"adminId\";",
+                  "    } else if (roleId === \"R02\") {",
+                  "        targetVar = \"staffId\";",
+                  "    } else if (roleId === \"R03\") {",
+                  "        targetVar = \"studentId\";",
+                  "    }",
+                  "",
+                  "    if (targetVar) {",
+                  "        pm.collectionVariables.set(targetVar, userId);",
+                  "        console.log(`Success! Saved ${targetVar}: ${userId}`);",
+                  "    }",
+                  "} else if (pm.response.code === 400) {",
+                  "    console.error(\"Validation Errors:\", res);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userComments\": \"{{userComments}}\",\r\n  \"userEduPg\": \"{{userEduPg}}\",\r\n  \"userEduUg\": \"{{userEduUg}}\",\r\n  \"userFirstName\": \"{{userFirstName}}\",\r\n  \"userLastName\": \"{{userLastName}}\",\r\n  \"userMiddleName\": \"{{userMiddleName}}\",\r\n  \"userPhoneNumber\": \"{{userPhoneNumber}}\",\r\n  \"userLinkedinUrl\": \"{{userLinkedinUrl}}\",\r\n  \"userLocation\": \"{{userLocation}}\",\r\n  \"userLogin\": {\r\n    \"loginStatus\": \"{{loginStatus}}\",\r\n    \"userLoginEmail\": \"{{userLoginEmail}}\"\r\n  },\r\n  \"userRoleMaps\": [\r\n    {\r\n      \"roleId\": \"{{roleId}}\",\r\n      \"userRoleStatus\": \"{{userRoleStatus}}\"\r\n    }\r\n  ],\r\n  \"userTimeZone\": \"{{userTimeZone}}\",\r\n  \"userVisaStatus\": \"{{userVisaStatus}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleStatus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleStatus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    pm.expect(res.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const user = res[0];\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"userId\");\r",
+                  "    pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(user).to.have.property(\"userMiddleName\");\r",
+                  "    pm.expect(user).to.have.property(\"userPhoneNumber\");\r",
+                  "    pm.expect(user).to.have.property(\"userLocation\");\r",
+                  "    pm.expect(user).to.have.property(\"userTimeZone\");\r",
+                  "    pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduUg\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduPg\");\r",
+                  "    pm.expect(user).to.have.property(\"userComments\");\r",
+                  "    pm.expect(user).to.have.property(\"userVisaStatus\");\r",
+                  "    pm.expect(user).to.have.property(\"userLinkedinUrl\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Active User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    pm.expect(res.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const user = res[0];\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"userId\");\r",
+                  "    pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(user).to.have.property(\"userMiddleName\");\r",
+                  "    pm.expect(user).to.have.property(\"userPhoneNumber\");\r",
+                  "    pm.expect(user).to.have.property(\"userLocation\");\r",
+                  "    pm.expect(user).to.have.property(\"userTimeZone\");\r",
+                  "    pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduUg\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduPg\");\r",
+                  "    pm.expect(user).to.have.property(\"userComments\");\r",
+                  "    pm.expect(user).to.have.property(\"userVisaStatus\");\r",
+                  "    pm.expect(user).to.have.property(\"userLinkedinUrl\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/activeUsers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "activeUsers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Emails of All Users with Active Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    pm.expect(res.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    res.forEach(email => {\r",
+                  "        pm.expect(email).to.be.a(\"string\");\r",
+                  "        pm.expect(email).to.include(\"@\");\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fetch-emails",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fetch-emails"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Roles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const jsonData = pm.response.json();\r",
+                  "    const user = jsonData[0];\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"roleId\");\r",
+                  "    pm.expect(user).to.have.property(\"roleName\");\r",
+                  "    pm.expect(user).to.have.property(\"roleDesc\");\r",
+                  "    pm.expect(user).to.have.property(\"creationTime\");\r",
+                  "    pm.expect(user).to.have.property(\"lastModTime\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/roles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Information by UserId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains user object\", function () \r",
+                  "{\r",
+                  "    pm.expect(res).to.have.property(\"user\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const user = res.user;\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"userId\");\r",
+                  "    pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(user).to.have.property(\"userMiddleName\");\r",
+                  "    pm.expect(user).to.have.property(\"userPhoneNumber\");\r",
+                  "    pm.expect(user).to.have.property(\"userLocation\");\r",
+                  "    pm.expect(user).to.have.property(\"userTimeZone\");\r",
+                  "    pm.expect(user).to.have.property(\"userLinkedinUrl\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduUg\");\r",
+                  "    pm.expect(user).to.have.property(\"userEduPg\");\r",
+                  "    pm.expect(user).to.have.property(\"userComments\");\r",
+                  "    pm.expect(user).to.have.property(\"userVisaStatus\");\r",
+                  "    pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Roles array\", function(){\r",
+                  "    pm.expect\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users with Roles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let res = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least one user exists\", function () {\r",
+                  "    pm.expect(res.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object contains required fields\", function () {\r",
+                  "    const user = res[0];\r",
+                  "\r",
+                  "    pm.expect(user).to.have.property(\"roleId\");\r",
+                  "    pm.expect(user).to.have.property(\"roleName\");\r",
+                  "    pm.expect(user).to.have.property(\"userId\");\r",
+                  "    pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(user).to.have.property(\"userRoleStatus\");\r",
+                  "    pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User fields have correct data types when present\", function () {\r",
+                  "    const user = res[0];\r",
+                  "\r",
+                  "   if (user.userMiddleName !== undefined) {\r",
+                  "        pm.expect(user.userMiddleName).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userPhoneNumber !== undefined) {\r",
+                  "        pm.expect(user.userPhoneNumber).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userLocation !== undefined) {\r",
+                  "        pm.expect(user.userLocation).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userTimeZone !== undefined) {\r",
+                  "        pm.expect(user.userTimeZone).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userLinkedinUrl !== undefined) {\r",
+                  "        pm.expect(user.userLinkedinUrl).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userEduUg !== undefined) {\r",
+                  "        pm.expect(user.userEduUg).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userEduPg !== undefined) {\r",
+                  "        pm.expect(user.userEduPg).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "\r",
+                  "    if (user.userVisaStatus !== undefined) {\r",
+                  "        pm.expect(user.userVisaStatus).to.be.a(\"string\");\r",
+                  "    }\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/roles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roles"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
   ],
+  "auth": {
+    "type": "bearer"
+  },
   "event": [
     {
       "listen": "prerequest",
@@ -5601,10 +6126,37 @@
     },
     {
       "key": "baseUrl",
+<<<<<<< Updated upstream
       "value": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms"
     },
     {
       "key": "batchName",
+=======
+      "value": "https://lms-hackathon-api-april\n-2026-8b55b53c8fab.herokuap\np.com/lms"
+    },
+    {
+      "key": "adminId",
+      "value": "U266"
+    },
+    {
+      "key": "staffId",
+      "value": "U265"
+    },
+    {
+      "key": "studentId",
+      "value": "U267"
+    },
+    {
+      "key": "userId",
+      "value": "U75"
+    },
+    {
+      "key": "phone",
+      "value": ""
+    },
+    {
+      "key": "email",
+>>>>>>> Stashed changes
       "value": ""
     }
   ]
