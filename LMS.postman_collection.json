@@ -6122,13 +6122,11 @@
     },
     {
       "key": "baseUrl",
-<<<<<<< Updated upstream
       "value": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms"
     },
     {
       "key": "batchName",
-=======
-      "value": "https://lms-hackathon-api-april\n-2026-8b55b53c8fab.herokuap\np.com/lms"
+      "value": ""
     },
     {
       "key": "adminId",
@@ -6152,7 +6150,6 @@
     },
     {
       "key": "email",
->>>>>>> Stashed changes
       "value": ""
     }
   ]
