@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 ﻿moduleType,programDescription,programName,programStatus,testType,requestType,expectedMessage,expectedSuccess,userFirstName,userLastName,userMiddleName,userPhoneNumber,userLocation,userTimeZone,userVisaStatus,userLoginEmail,loginStatus,roleId,userRoleStatus,userEduUg,userEduPg,userComments,userLinkedinUrl,end_point
 Program,vj pgm testing,vj pgm,Inactive,negative,post,No active program with the program Id,false,,,,,,,,,,,,,,,,
 User,,,,,,,,John,Smith,A,9876543210,Seattle,PST,H1B,john.smith@test.com,Active,R02,Active,Btech,MS,Created via CSV,https://www.linkedin.com/john,
@@ -9,10 +8,4 @@ Program,sssssssssssssssssssssssss,vjlkjjjjjjjjjjjjjjj,ACTIVE,positive,post_long_
 Program,pppssssssssssssssssssssss,vjlkjjjjjjjjjjjjjjp,ACTIVE,positive,update,,,,,,,,,,,,,,,,,,
 Program,ppwssssssssssssssssssssss,vjlkjjjjjjjjjjjjjjw,ACTIVE,positive,update_invalid_endpoint,,,,,,,,,,,,,,,,,,invalidendpoint
 Program,updatessssssssssssssss,updjjjjjjjjjjjjjjp,ACTIVE,positive,update_by_program_id,,,,,,,,,,,,,,,,,,
-=======
-﻿moduleType,programDescription,programName,programStatus,testType,requestType,expectedMessage,expectedSuccess,userFirstName,userLastName,userMiddleName,userPhoneNumber,userLocation,userTimeZone,userVisaStatus,userLoginEmail,loginStatus,roleId,userRoleStatus,userEduUg,userEduPg,userComments,userLinkedinUrl
-Program,vj pgm testing,vj pgm,Inactive,negative,post,No active program with the program Id,false,,,,,,,,,,,,,,,
-User,,,,,,,,John,Smith,A,+1 4233453456,Seattle,PST,H1B,john.smith@test.com,Active,R02,Active,Btech,MS,Created via CSV,https://www.linkedin.com/john
-User,,,,,,,,Mary,Port,B,+1 3453453456,Dallas,CST,US-Citizen,mary.port@test.com,Active,R03,Active,Bsc,MBA,Created via CSV,https://www.linkedin.com/mary
-User,,,,,,,,Ravi,Kumar,C,+91 2342345245,Hyderabad,IST,Indian-Citizen,ravi.kumar@test.com,Active,R01,Active,BTech,Mtech,Created via CSV,https://www.linkedin.com/ravi
->>>>>>> Stashed changes
+
