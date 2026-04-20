@@ -1,10 +1,6 @@
 {
   "info": {
-<<<<<<< Updated upstream
-    "_postman_id": "db5786fe-45eb-40d9-a32c-55e74470b9de",
-=======
     "_postman_id": "bec59b9d-15b9-460e-86f0-e48fec6a6aac",
->>>>>>> Stashed changes
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53617151",
