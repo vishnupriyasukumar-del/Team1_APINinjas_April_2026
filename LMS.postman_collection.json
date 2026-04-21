@@ -4,6 +4,10 @@
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "8806598"
+    "_postman_id": "ec3d2301-688b-4558-a8c6-adf6f7343242",
+    "name": "LMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13687372"
   },
   "item": [
     {
@@ -19,64 +23,76 @@
                   "const responseData = pm.response.json();",
                   "const lms_token = responseData.token;",
                   "pm.collectionVariables.set(\"lms_access_token\",lms_token);",
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test(\"validating whether the Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field token\",function(){",
-                  "    pm.expect(responseData).to.have.property('token');",
+                  "pm.test(\"Validating the Response is an object\", function () {",
+                  "    pm.expect(responseData).to.be.an(\"object\");",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field Type\",function(){",
-                  "    pm.expect(responseData).to.have.property('type');",
-                  "});",
-                  "pm.test(\"Response to have the field userID\",function(){",
-                  "    pm.expect(responseData).to.have.property('userId');",
+                  "pm.test(\"Validating the response has all the required fields\", function () {",
+                  "    const requiredFields = [",
+                  "        \"token\",",
+                  "        \"type\",",
+                  "        \"userId\",",
+                  "        \"email\",",
+                  "        \"roles\",",
+                  "        \"status\",",
+                  "        \"passwordExpired\"",
+                  "    ];",
+                  "",
+                  "    pm.expect(Object.keys(responseData)).to.include.members(requiredFields);",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field email\",function(){",
-                  "    pm.expect(responseData).to.have.property('email');",
+                  "",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {",
+                  "    pm.expect(responseData.token).to.be.a(\"string\");",
+                  "    pm.expect(responseData.type).to.be.a(\"string\");",
+                  "    pm.expect(responseData.userId).to.be.a(\"string\");",
+                  "    pm.expect(responseData.email).to.be.a(\"string\");",
+                  "    pm.expect(responseData.roles).to.be.an(\"array\");",
+                  "    pm.expect(responseData.status).to.be.a(\"string\");",
+                  "    pm.expect(responseData.passwordExpired).to.be.a(\"boolean\");",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field roles\",function(){",
-                  "    pm.expect(responseData).to.have.property('roles');",
+                  "pm.test(\"Validating Token is not empty\", function () {",
+                  "    pm.expect(responseData.token.trim().length).to.be.above(0);",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field status\",function(){",
-                  "    pm.expect(responseData).to.have.property('status');",
+                  "pm.test(\"Validating Token has JWT format\", function () {",
+                  "    const parts = responseData.token.split(\".\");",
+                  "    pm.expect(parts.length).to.eql(3);",
+                  "    parts.forEach(part => pm.expect(part.length).to.be.above(0));",
                   "});",
                   "",
-                  "pm.test(\"Response to have the field password\",function(){",
-                  "    pm.expect(responseData).to.have.property('passwordExpired')",
+                  "pm.test(\"Validating the value of the Type is Bearer\", function () {",
+                  "    pm.expect(responseData.type).to.eql(\"Bearer\");",
                   "});",
                   "",
-                  "pm.test(\"validating response body data type for Token\", function () {",
-                  "    pm.expect(responseData.token).to.be.a('string');",
-                  "});",
-                  "pm.test(\"validating response body data type for Type\", function () {",
-                  "    pm.expect(responseData.type).to.be.a('string');",
+                  "pm.test(\"Validating UserID starts with U and followed by digits\", function () {",
+                  "    const userIdvalue = /^U\\d+$/;",
+                  "    pm.expect(userIdvalue.test(responseData.userId)).to.be.true;",
                   "});",
                   "",
-                  "pm.test(\"validating response body data type for userID\", function () {",
-                  "      pm.expect(responseData.userId).to.be.a('string');",
+                  "",
+                  "pm.test(\"Validating Email format is valid\", function () {",
+                  "    const emailformat = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;",
+                  "    pm.expect(emailformat.test(responseData.email)).to.be.true;",
                   "});",
                   "",
-                  "pm.test(\"validating response body data type for email\", function () {",
-                  "   pm.expect(responseData.email).to.be.a('string');",
+                  "pm.test(\"Validating Roles array is not empty\", function () {",
+                  "    pm.expect(responseData.roles.length).to.be.above(0);",
                   "});",
                   "",
-                  "pm.test(\"validating response body data type for roles\", function () {",
-                  " pm.expect(responseData.roles).to.be.an('array');",
+                  "pm.test(\"Validating the value of Status field\", function () {",
+                  " const allowedStatus = [\"active\", \"inactive\"];",
+                  " pm.expect(allowedStatus).to.include(responseData.status);",
                   "});",
                   "",
-                  "pm.test(\"validating response body data type for status\", function () {",
-                  "    pm.expect(responseData.status).to.be.a('string');",
-                  "});",
-                  "",
-                  "pm.test(\"validating response body data type for passwordExpired\", function () {",
-                  "    pm.expect(responseData.passwordExpired).to.be.a('boolean');",
-                  "});",
-                  ""
+                  "pm.test(\"Validating the passwordExpired is boolean value\", function () {",
+                  "    pm.expect(responseData.passwordExpired).to.be.oneOf([true, false]);",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -100,15 +116,60 @@
               }
             },
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/login",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Sign Invalid credential",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "pm.test(\"validating whether the Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Validating the Response is an object\", function () {",
+                  "    pm.expect(responseData).to.be.an(\"object\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"T01@gmail.com\",\n\"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
                 "login"
               ]
             }
@@ -122,6 +183,7 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "const responseData = pm.response.json();",
                   "",
                   "pm.test(\"Status code is 400\", function () {",
                   "    pm.response.to.have.status(400);",
@@ -129,14 +191,17 @@
                   "",
                   "",
                   "pm.test(\"Responsebody matches string for the Message: Json parse error \", function () {",
-                  "    pm.expect(pm.response.text()).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");",
+                  "    pm.expect(responseData.message).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");",
                   "});",
                   "",
                   "pm.test(\"ResponseBody matches string for the Success: false\", function () {",
-                  "    pm.expect(pm.response.text()).to.include(\"false\");",
+                  "     pm.expect(responseData.success).to.be.false;",
                   "});",
                   "",
-                  ""
+                  "pm.test(\"validating response body data type for all the required fields\", function () {",
+                  "    pm.expect(responseData.message).to.be.a(\"string\");",
+                  "    pm.expect(responseData.success).to.be.a(\"Boolean\");",
+                  "    });"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -160,15 +225,11 @@
               }
             },
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/login",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/login",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
                 "login"
               ]
             }
@@ -185,6 +246,9 @@
                   "",
                   "pm.test(\"Status code is 404\", function () {",
                   "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test(\"Logout successful\", function () {",
+                  "    pm.expect(pm.response.text()).to.eql(\"Invalid endpoint\");",
                   "});",
                   ""
                 ],
@@ -261,15 +325,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logoutlms",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/logoutlms",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
                 "logoutlms"
               ]
             }
@@ -283,18 +343,20 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "const responseData = pm.response.json();\r",
+                  "\r",
                   "pm.test(\"Status code is 405\", function () {\r",
                   "    pm.response.to.have.status(405);\r",
                   "});\r",
                   "\r",
                   "pm.test(\"ResponseBody matches string for the Message: Request method 'GET' is not supported \", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"Request method 'GET' is not supported\");\r",
-                  "\r",
+                  "     pm.expect(responseData.message).to.include(\"Request method 'GET' is not supported\");\r",
+                  "});\r",
                   "pm.test(\"ResponseBody matches string for the Success: false\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"false\");\r",
+                  "    pm.expect(responseData.success).to.be.false;\r",
                   "});\r",
                   "\r",
-                  "});\r",
+                  "\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -317,16 +379,490 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/logout",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/logout",
               "host": [
-                "lms-hackathon-api-april-2026-8b55b53c8fab",
-                "herokuapp",
-                "com"
+                "{{baseUrl}}"
               ],
               "path": [
-                "lms",
                 "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.execution.skipRequest();\r",
+                  "console.log(\"Skipping Forgot Password API — disabled\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"validating whether the Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {\r",
+                  "    pm.expect(responseData.message).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.success).to.be.a(\"Boolean\");\r",
+                  "    });\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmailId\": \"Team01@gmail.com\",\r\n\"password\": \"Team01@456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resetPassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resetPassword"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password Bad request",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "//pm.execution.skipRequest();\r",
+                  "console.log(\"Skipping Forgot Password API — Bad request\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"validating whether the Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {\r",
+                  "    pm.expect(responseData.message).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.success).to.be.a(\"Boolean\");\r",
+                  "    });\r",
+                  "\r",
+                  "pm.test(\"Responsebody matches string for the Message: Json parse error \", function () {\r",
+                  "    pm.expect(responseData.message).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {\r",
+                  "     pm.expect(responseData.success).to.be.false;\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmailId\": \"Team01@gmail.com\",\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resetPassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resetPassword"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Email first try",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.execution.skipRequest();\r",
+                  "console.log(\"Skipping  Confirm email API — After the first try\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"validating whether the Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the Response is an object\", function () {\r",
+                  "    pm.expect(responseData).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the response has all the required fields\", function () {\r",
+                  "    const requiredFields = [\r",
+                  "        \"token\",\r",
+                  "        \"type\",\r",
+                  "        \"userId\",\r",
+                  "        \"email\",\r",
+                  "        \"roles\",\r",
+                  "        \"status\",\r",
+                  "        \"passwordExpired\"\r",
+                  "    ];\r",
+                  "\r",
+                  "    pm.expect(Object.keys(responseData)).to.include.members(requiredFields);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {\r",
+                  "    pm.expect(responseData.token).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.type).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.userId).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.email).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.roles).to.be.an(\"array\");\r",
+                  "    pm.expect(responseData.status).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.passwordExpired).to.be.a(\"boolean\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating Token is not empty\", function () {\r",
+                  "    pm.expect(responseData.token.trim().length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating Token has JWT format\", function () {\r",
+                  "    const parts = responseData.token.split(\".\");\r",
+                  "    pm.expect(parts.length).to.eql(3);\r",
+                  "    parts.forEach(part => pm.expect(part.length).to.be.above(0));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the value of the Type is Bearer\", function () {\r",
+                  "    pm.expect(responseData.type).to.eql(\"Bearer\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating UserID starts with U and followed by digits\", function () {\r",
+                  "    const userIdvalue = /^U\\d+$/;\r",
+                  "    pm.expect(userIdvalue.test(responseData.userId)).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Validating Email format is valid\", function () {\r",
+                  "    const emailformat = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+                  "    pm.expect(emailformat.test(responseData.email)).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating Roles array is not empty\", function () {\r",
+                  "    pm.expect(responseData.roles.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the passwordExpired is boolean value\", function () {\r",
+                  "    pm.expect(responseData.passwordExpired).to.be.oneOf([true, false]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmailId\": \"Team01@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login/forgotpassword/confirmEmail",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login",
+                "forgotpassword",
+                "confirmEmail"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm email Bad request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();",
+                  "",
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Responsebody matches string for the Message: Json parse error \", function () {",
+                  "    pm.expect(responseData.message).to.include(\"JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name\");",
+                  "});",
+                  "",
+                  "pm.test(\"ResponseBody matches string for the Success: false\", function () {",
+                  "     pm.expect(responseData.success).to.be.false;",
+                  "});",
+                  "",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {",
+                  "    pm.expect(responseData.message).to.be.a(\"string\");",
+                  "    pm.expect(responseData.success).to.be.a(\"Boolean\");",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"userLoginEmailId\": \"Team01@gmail\",\n\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login/forgotpassword/confirmEmail",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login",
+                "forgotpassword",
+                "confirmEmail"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Email Multiple try",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"validating whether the Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the Response is an object\", function () {\r",
+                  "    pm.expect(responseData).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the response has all the required fields\", function () {\r",
+                  "    const requiredFields = [\r",
+                  "        \"token\",\r",
+                  "        \"type\",\r",
+                  "        \"userId\",\r",
+                  "        \"email\",\r",
+                  "        \"roles\",\r",
+                  "        \"status\",\r",
+                  "        \"passwordExpired\"\r",
+                  "    ];\r",
+                  "\r",
+                  "    pm.expect(Object.keys(responseData)).to.include.members(requiredFields);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"validating response body data type for all the required fields\", function () {\r",
+                  "    pm.expect(responseData.type).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.userId).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.email).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.roles).to.be.an(\"array\");\r",
+                  "    pm.expect(responseData.status).to.be.a(\"string\");\r",
+                  "    pm.expect(responseData.passwordExpired).to.be.a(\"boolean\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating Token is null\", function () {\r",
+                  "    pm.expect(responseData.token).to.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the value of the Type is Bearer\", function () {\r",
+                  "    pm.expect(responseData.type).to.eql(\"Bearer\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating UserID starts with U and followed by digits\", function () {\r",
+                  "    const userIdvalue = /^U\\d+$/;\r",
+                  "    pm.expect(userIdvalue.test(responseData.userId)).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Validating Email format is valid\", function () {\r",
+                  "    const emailformat = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+                  "    pm.expect(emailformat.test(responseData.email)).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating Roles array is not empty\", function () {\r",
+                  "    pm.expect(responseData.roles.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validating the passwordExpired is boolean value\", function () {\r",
+                  "    pm.expect(responseData.passwordExpired).to.be.oneOf([true, false]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmailId\": \"Team01@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login/forgotpassword/confirmEmail",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login",
+                "forgotpassword",
+                "confirmEmail"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Email Multiple invalid endpoints",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Invalid Endpoints\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"Invalid endpoint\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmailId\": \"Team01@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login/forgotpassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login",
+                "forgotpassword"
               ]
             }
           },
