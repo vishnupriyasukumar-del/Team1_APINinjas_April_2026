@@ -1,5 +1,9 @@
 {
   "info": {
+    "_postman_id": "c81f95d0-4f45-4449-92dc-a28837d0c890",
+    "name": "LMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8806598"
     "_postman_id": "ec3d2301-688b-4558-a8c6-adf6f7343242",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -6834,10 +6838,6 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "if (pm.iterationData.get(\"moduleType\") !== \"User\") {",
-                  "    pm.execution.setNextRequest(null);",
-                  "    return;",
-                  "}",
                   "const res = pm.response.json();",
                   "const roleId = pm.iterationData.get(\"roleId\");",
                   "",
@@ -7359,6 +7359,690 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Get Count of Active and Inactive Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains Active and Inactive objects\", function () {\r",
+                  "    pm.expect(pm.response.json().length).to.be.within(1,2);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each object contains status and count\", function () {\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"status\");\r",
+                  "        pm.expect(item).to.have.property(\"count\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status values are valid\", function () {\r",
+                  "    const valid = [\"Active\", \"Inactive\"];\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(valid).to.include(item.status);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Count values are valid\", function () {\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item.count).to.be.a(\"number\");\r",
+                  "        pm.expect(item.count).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/byStatus?id=R04",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "byStatus"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "R04"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users by RoleId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each record contains required fields\", function () {\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"userId\");\r",
+                  "        pm.expect(item).to.have.property(\"userFirstName\");\r",
+                  "        pm.expect(item).to.have.property(\"userLastName\");\r",
+                  "        pm.expect(item).to.have.property(\"userPhoneNumber\");\r",
+                  "        pm.expect(item).to.have.property(\"userLocation\");\r",
+                  "        pm.expect(item).to.have.property(\"userTimeZone\");\r",
+                  "        pm.expect(item).to.have.property(\"userLinkedinUrl\");\r",
+                  "        pm.expect(item).to.have.property(\"userEduUg\");\r",
+                  "        pm.expect(item).to.have.property(\"userEduPg\");\r",
+                  "        pm.expect(item).to.have.property(\"userVisaStatus\");\r",
+                  "        pm.expect(item).to.have.property(\"userLoginEmail\");\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/roles/R03",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roles",
+                "R03"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users with Facets/Filters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains users and facets\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"users\");\r",
+                  "    pm.expect(json).to.have.property(\"facets\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Users is an array\", function () {\r",
+                  "    pm.expect(pm.response.json().users).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each user contains required fields\", function () {\r",
+                  "    pm.response.json().users.forEach(user => {\r",
+                  "        pm.expect(user).to.have.property(\"userId\");\r",
+                  "        pm.expect(user).to.have.property(\"userFirstName\");\r",
+                  "        pm.expect(user).to.have.property(\"userLastName\");\r",
+                  "        pm.expect(user).to.have.property(\"userPhoneNumber\");\r",
+                  "        pm.expect(user).to.have.property(\"userLocation\");\r",
+                  "        pm.expect(user).to.have.property(\"userTimeZone\");\r",
+                  "        pm.expect(user).to.have.property(\"userVisaStatus\");\r",
+                  "        pm.expect(user).to.have.property(\"userLoginEmail\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Facets structure is valid\", function () {\r",
+                  "    const facets = pm.response.json().facets;\r",
+                  "    pm.expect(facets).to.have.property(\"facetedFields\");\r",
+                  "    pm.expect(facets.facetedFields).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"userId format is valid\", function () {\r",
+                  "    pm.response.json().users.forEach(user => {\r",
+                  "        pm.expect(user.userId).to.match(/^U\\d+$/);\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v2/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User BatchId by UserId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/user/U03",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "user",
+                "U03"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Details by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each record contains required fields\", function () {\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"programName\");\r",
+                  "        pm.expect(item).to.have.property(\"batchName\");\r",
+                  "        pm.expect(item).to.have.property(\"userFirstName\");\r",
+                  "        pm.expect(item).to.have.property(\"userLastName\");\r",
+                  "        pm.expect(item).to.have.property(\"userLoginEmail\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email format is valid\", function () {\r",
+                  "    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item.userLoginEmail).to.match(emailRegex);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Program and batch names are non-empty\", function () {\r",
+                  "    pm.response.json().forEach(item => {\r",
+                  "        pm.expect(item.programName).to.be.a(\"string\").and.not.empty;\r",
+                  "        pm.expect(item.batchName).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/details/U75",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "details",
+                "U75"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "let request = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains all required fields\", function () {\r",
+                  "    pm.expect(response).to.have.property(\"userFirstName\");\r",
+                  "    pm.expect(response).to.have.property(\"userLastName\");\r",
+                  "    pm.expect(response).to.have.property(\"userPhoneNumber\");\r",
+                  "    pm.expect(response).to.have.property(\"userVisaStatus\");\r",
+                  "    pm.expect(response).to.have.property(\"userTimeZone\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated fields match request body\", function () {\r",
+                  "    pm.expect(response.userFirstName).to.eql(request.userFirstName);\r",
+                  "    pm.expect(response.userLastName).to.eql(request.userLastName);\r",
+                  "    pm.expect(response.userPhoneNumber).to.eql(request.userPhoneNumber);\r",
+                  "    pm.expect(response.userLocation).to.eql(request.userLocation);\r",
+                  "    pm.expect(response.userVisaStatus).to.eql(request.userVisaStatus);\r",
+                  "    pm.expect(response.userTimeZone).to.eql(request.userTimeZone);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email format is valid\", function () {\r",
+                  "    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+                  "    pm.expect(response.userLoginEmail).to.match(emailRegex);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Phone number is string\", function () {\r",
+                  "    pm.expect(response.userPhoneNumber).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Mandatory fields are not empty\", function () {\r",
+                  "    pm.expect(response.userFirstName).to.not.be.empty;\r",
+                  "    pm.expect(response.userLastName).to.not.be.empty;\r",
+                  "    pm.expect(response.userPhoneNumber).to.not.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Time zone is valid\", function () {\r",
+                  "    const validTimeZones = [\"PST\", \"MST\", \"CST\", \"EST\", \"IST\"];\r",
+                  "    pm.expect(validTimeZones).to.include(response.userTimeZone);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Visa status is valid\", function () {\r",
+                  "    const validVisaStatuses = [\"Not-Specified\", \"NA\", \"GC-EAD\", \"H4-EAD\", \"H4\",\"H1B\", \"Canada-EAD\", \"Indian-Citizen\",\r",
+                  "\"US-Citizen\", \"Canada-Citizen\"];\r",
+                  "    pm.expect(validVisaStatuses).to.include(response.userVisaStatus);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userComments\": \"John Doe is updated by PUTrequest again\",\r\n  \"userEduPg\": \"MS\",\r\n  \"userEduUg\": \"B.Tech\",\r\n  \"userFirstName\": \"Johney\",\r\n  \"userLastName\": \"Doeye\",\r\n  \"userMiddleName\": \"K\",\r\n  \"userLinkedinUrl\": \"https://www.linkedin.com/in/johndoe\",\r\n  \"userLocation\": \"Texas\",\r\n  \"userLoginEmail\": \"john.doe@gmail.com\",\r\n  \"userPhoneNumber\": \"+1 2345678900\",\r\n  \"userTimeZone\": \"CST\",\r\n  \"userVisaStatus\": \"H4\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/U75",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "U75"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User RoleId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "let request = JSON.parse(pm.request.body.raw);\r",
+                  "let status = pm.response.code;\r",
+                  "\r",
+                  "pm.test(\"Status code is valid\", function () {\r",
+                  "    pm.expect([200, 404]).to.include(status);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Request contains userRoleList\", function () {\r",
+                  "    pm.expect(request).to.have.property(\"userRoleList\");\r",
+                  "    pm.expect(request.userRoleList).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userRoleList\": [\r\n    {\r\n      \"roleId\": \"R03\",\r\n      \"userRoleStatus\": \"Active\"\r\n    }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleId/U75",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleId",
+                "U75"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Role Program Batch Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains success message\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"successfully assigned\");\r",
+                  "});\r",
+                  "\r",
+                  "let req = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "pm.test(\"Request has required fields\", function () {\r",
+                  "    pm.expect(req).to.have.property(\"programId\");\r",
+                  "    pm.expect(req).to.have.property(\"roleId\");\r",
+                  "    pm.expect(req).to.have.property(\"userRoleProgramBatches\");\r",
+                  "});\r",
+                  "pm.test(\"Batch object contains required fields\", function () {\r",
+                  "    req.userRoleProgramBatches.forEach(b => {\r",
+                  "        pm.expect(b).to.have.property(\"batchId\");\r",
+                  "        pm.expect(b).to.have.property(\"userRoleProgramBatchStatus\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"programId\": 1692,\r\n\"roleId\": \"R02\",\r\n\"userRoleProgramBatches\": [\r\n{\r\n\"batchId\": 2012,\r\n\"userRoleProgramBatchStatus\": \"Active\"\r\n}\r\n]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/roleProgramBatchStatus/U75",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "roleProgramBatchStatus",
+                "U75"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Login Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains success message\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"Updated for User\");\r",
+                  "});\r",
+                  "\r",
+                  "let req = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "pm.test(\"Request contains required fields\", function () {\r",
+                  "    pm.expect(req).to.have.property(\"userLoginEmail\");\r",
+                  "    pm.expect(req).to.have.property(\"loginStatus\");\r",
+                  "    pm.expect(req).to.have.property(\"status\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"userLoginEmail\": \"john.doe@gmail.com\",\r\n\"loginStatus\": \"Active\",\r\n\"status\": \"Active\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/userLogin/U75",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "userLogin",
+                "U75"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/U1306",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "U1306"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "if (pm.iterationData.get(\"moduleType\") !== \"User\") {\r",
+              "    pm.execution.setNextRequest(null);\r",
+              "    return;\r",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
         }
       ]
     }
@@ -7398,10 +8082,6 @@
     {
       "key": "baseUrl",
       "value": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms"
-    },
-    {
-      "key": "batchName",
-      "value": ""
     },
     {
       "key": "adminId",
