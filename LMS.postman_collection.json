@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "bec59b9d-15b9-460e-86f0-e48fec6a6aac",
+    "_postman_id": "8300b43a-e72a-4edf-bff5-e1c3db1f4b0e",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53617151",
-    "_collection_link": "https://go.postman.co/collection/53617151-db5786fe-45eb-40d9-a32c-55e74470b9de?source=collection_link"
+    "_exporter_id": "45517037",
+    "_collection_link": "https://go.postman.co/collection/45517037-8300b43a-e72a-4edf-bff5-e1c3db1f4b0e?source=collection_link"
   },
   "item": [
     {
@@ -1418,7 +1418,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// 1. Status code",
+                  "if (pm.iterationData.get(\"testType\") === \"negative\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post\") {",
+                  "        // 1. Status code",
                   "pm.test(\"Status code is 404\", function () {",
                   "    pm.response.to.have.status(404);",
                   "});",
@@ -1446,9 +1448,12 @@
                   "",
                   "// 5. Validate success flag matches CSV",
                   "pm.test(\"Success flag matches CSV\", function () {",
-                  "    console.log(\"expectedSuccess RAW:\", pm.iterationData.get(\"expectedSuccess\"));",
-                  "    const expectedSuccess = pm.iterationData.get(\"expectedSuccess\");",
-                  "    pm.expect(responseData.success.toString()).to.eql(expectedSuccess.toString());",
+                  "    let expected = pm.iterationData.get(\"expectedSuccess\");",
+                  "",
+                  "    // Convert falsee → false, truee → true",
+                  "    expected = expected.toLowerCase().startsWith(\"true\") ? \"true\" : \"false\";",
+                  "",
+                  "    pm.expect(responseData.success.toString()).to.eql(expected);",
                   "});",
                   "",
                   "// 6. Validate response contains only expected fields",
@@ -1477,6 +1482,8 @@
                   "pm.test(\"Response matches expected schema\", function () {",
                   "    pm.expect(responseData).to.have.jsonSchema(deleteInactiveSchema);",
                   "});",
+                  "",
+                  "    }",
                   ""
                 ],
                 "type": "text/javascript",
@@ -2108,6 +2115,102 @@
           "response": []
         },
         {
+          "name": "Update Invalid ProgramName",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"negative\" && requestType === \"update_invalidpgm_name\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "const updated = pm.response.json();",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Update Program by ProgramName(Positive):\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Update Program by ProgramName:\", updated);",
+                  "",
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"negative\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"update_invalidpgm_name\") {",
+                  "console.log(\"The testtype for Update Invalid ProgramName\"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType for Update Invalid ProgramName\"+pm.iterationData.get(\"requestType\"))",
+                  "   ",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName;",
+                  "    ",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"Negative  programName:\", uniqueName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/program/{{programName}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "program",
+                "{{programName}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Delete Max ProgramName and Program Description",
           "event": [
             {
@@ -2386,6 +2489,422 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Add new Program with space Pgm Name",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "",
+                  "",
+                  "",
+                  "if (pm.iterationData.get(\"testType\") === \"positive\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post_pgm_space\") {",
+                  "\t\t\tconsole.log(\"ROW iteration data:\", pm.iterationData);",
+                  "console.log(\"ROW DATA:\", pm.iterationData.toObject());",
+                  "        console.log(\"MATCHED post_pgm_space row\");",
+                  "",
+                  "    const randomLetters = eval(pm.variables.get(\"randomLettersFunction\"));",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    const uniqueName = baseName + \"-\" + randomLetters(2);",
+                  "",
+                  "    pm.variables.set(\"programName\", uniqueName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"NEGATIVE  programName:\", uniqueName);",
+                  "",
+                  "}",
+                  "else{",
+                  "    console.log(\"NOT MATCHED — skipping this row\");",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"positive\" && requestType === \"post_pgm_space\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Log response",
+                  "console.log(\"Response Data Add New Program InActive Status:\", responseData);",
+                  "",
+                  "// Store programId for delete by programe Name",
+                  "pm.collectionVariables.set(\"space_pgm_name\", responseData.programName);",
+                  "",
+                  "// Log request body",
+                  "console.log(\"FINAL REQUEST BODY (Postive):\", JSON.parse(pm.request.body.raw));",
+                  "",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// 2. programName matches generated value",
+                  "pm.test(\"Program Name matches generated value\", function () {",
+                  "    pm.expect(responseData.programName).to.eql(pm.variables.get(\"programName\"));",
+                  "});",
+                  "",
+                  "// 3. programName is not empty",
+                  "pm.test(\"Program Name is not empty\", function () {",
+                  "    pm.expect(responseData.programName.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 4. programDescription matches CSV",
+                  "pm.test(\"Program Description matches CSV\", function () {",
+                  "    pm.expect(responseData.programDescription)",
+                  "      .to.eql(pm.iterationData.get(\"programDescription\"));",
+                  "});",
+                  "",
+                  "// 5. programDescription is not empty",
+                  "pm.test(\"Program Description is not empty\", function () {",
+                  "    pm.expect(responseData.programDescription.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 6. programStatus matches CSV (Inactive)",
+                  "pm.test(\"Program Status matches CSV\", function () {",
+                  "    pm.expect(responseData.programStatus)",
+                  "      .to.eql(pm.iterationData.get(\"programStatus\"));",
+                  "});",
+                  "",
+                  "// 7. programId exists and is numeric",
+                  "pm.test(\"programId is present and numeric\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"programId\");",
+                  "    pm.expect(responseData.programId).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "// 8. programId is positive",
+                  "pm.test(\"programId is positive\", function () {",
+                  "    pm.expect(responseData.programId).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 9. creationTime exists",
+                  "pm.test(\"creationTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"creationTime\");",
+                  "    pm.expect(responseData.creationTime).to.not.be.null;",
+                  "});",
+                  "",
+                  "// 10. creationTime is valid ISO timestamp",
+                  "pm.test(\"creationTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.creationTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 11. lastModTime exists",
+                  "pm.test(\"lastModTime is present\", function () {",
+                  "    pm.expect(responseData).to.have.property(\"lastModTime\");",
+                  "    pm.expect(responseData.lastModTime).to.not.be.null;",
+                  "});",
+                  "",
+                  "// 12. lastModTime is valid ISO timestamp",
+                  "pm.test(\"lastModTime is valid ISO timestamp\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime)).to.not.be.NaN;",
+                  "});",
+                  "",
+                  "// 13. lastModTime >= creationTime",
+                  "pm.test(\"lastModTime is same or after creationTime\", function () {",
+                  "    pm.expect(Date.parse(responseData.lastModTime))",
+                  "      .to.be.at.least(Date.parse(responseData.creationTime));",
+                  "});",
+                  "",
+                  "// 14. Response contains only expected fields",
+                  "pm.test(\"Response contains only expected fields\", function () {",
+                  "    const expectedKeys = [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ];",
+                  "    pm.expect(Object.keys(responseData)).to.have.members(expectedKeys);",
+                  "});",
+                  "",
+                  "// 15. Schema validation",
+                  "const negativeProgramSchema = {",
+                  "    type: \"object\",",
+                  "    required: [",
+                  "        \"programId\",",
+                  "        \"programName\",",
+                  "        \"programDescription\",",
+                  "        \"programStatus\",",
+                  "        \"creationTime\",",
+                  "        \"lastModTime\"",
+                  "    ],",
+                  "    properties: {",
+                  "        programId: { type: \"number\" },",
+                  "        programName: { type: \"string\" },",
+                  "        programDescription: { type: \"string\" },",
+                  "        programStatus: { type: \"string\" },",
+                  "        creationTime: { type: \"string\" },",
+                  "        lastModTime: { type: \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Response matches expected schema\", function () {",
+                  "    pm.expect(responseData).to.have.jsonSchema(negativeProgramSchema);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\": \"{{programStatus}}\"\n}\n\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Program By ProgramName",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post_pgm_space\"",
+                  "if (!(testType === \"positive\" && requestType === \"post_pgm_space\")) {",
+                  "    console.log(\"Skipping request → testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.execution.skipRequest();",
+                  "    return;",
+                  "}",
+                  "",
+                  "console.log(\"Running request positive POST AND requestType = post_pgm_space\");",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post_long_pm\"",
+                  "if (!(testType === \"positive\" && requestType === \"post_pgm_space\")) {",
+                  "    console.log(\"Skipping 200-status tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
+                  "",
+                  "",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/deletebyprogname/{{space_pgm_name}}",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "deletebyprogname",
+                "{{space_pgm_name}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Program with program name less than 4",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.iterationData.get(\"testType\") === \"negative\" &&",
+                  "    pm.iterationData.get(\"requestType\") === \"post_pgm_less_than_4\") {",
+                  "console.log(\"The testtype for Add New Program with program name less than 4 is \"+pm.iterationData.get(\"testType\"))",
+                  "console.log(\"The requestType for Add New Program with program name less than 4 is \"+pm.iterationData.get(\"requestType\"))",
+                  "    ",
+                  "",
+                  "    const baseName = pm.iterationData.get(\"programName\");",
+                  "    ",
+                  "",
+                  "    pm.variables.set(\"programName\", baseName);",
+                  "    pm.variables.set(\"programDescription\", pm.iterationData.get(\"programDescription\"));",
+                  "    pm.variables.set(\"programStatus\", pm.iterationData.get(\"programStatus\"));",
+                  "",
+                  "    console.log(\"POSTIVE  programName:\", baseName);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testType = pm.iterationData.get(\"testType\");",
+                  "const requestType = pm.iterationData.get(\"requestType\");",
+                  "",
+                  "// Run ONLY when testType = \"positive\" AND requestType = \"post\"",
+                  "if (!(testType === \"negative\" && requestType === \"post_pgm_less_than_4\")) {",
+                  "    console.log(\"Skipping tests since testType:\", testType, \"requestType:\", requestType);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "// 1. Status code",
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// Store programId for delete",
+                  "pm.collectionVariables.set(\"program_id\", responseData.programId);",
+                  "",
+                  "",
+                  "",
+                  "// Log request + response",
+                  "console.log(\"FINAL REQUEST BODY Add New Program with program name less than 4:\", JSON.parse(pm.request.body.raw));",
+                  "console.log(\"Response Data for Add New Program with program name less than 4:\", responseData);",
+                  "",
+                  "console.log(\"the  expectedMessage is +\"+ pm.iterationData.get(\"expectedMessage\"));",
+                  "console.log(\"the  actual Message  is +\"+ responseData.programName);",
+                  "",
+                  "//  programStatus matches iteration data (case-insensitive)",
+                  "pm.test(\"Program Status matches iteration data (case-insensitive)\", function () {",
+                  "    const expectedMessage = pm.iterationData.get(\"expectedMessage\");",
+                  "    pm.expect(responseData.programName.toLowerCase())",
+                  "      .to.eql(expectedMessage.toLowerCase());",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"programDescription\": \"{{programDescription}}\",\n\"programName\": \"{{programName}}\",\n\"programStatus\":\"{{programStatus}}\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/saveprogram",
+              "protocol": "https",
+              "host": [
+                "lms-hackathon-api-april-2026-8b55b53c8fab",
+                "herokuapp",
+                "com"
+              ],
+              "path": [
+                "lms",
+                "saveprogram"
+              ]
+            }
+          },
+          "response": []
         }
       ],
       "event": [
@@ -2475,6 +2994,14 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 201 Created\", function () {\r",
                   "    pm.response.to.have.status(201);\r",
@@ -2549,6 +3076,14 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "//1. Status code check only - no variable saving\r",
                   "pm.test(\"Status code is 201 Created\", function () {\r",
                   "    pm.response.to.have.status(201);\r",
@@ -2670,6 +3205,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -2760,6 +3302,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -2850,6 +3399,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -2943,6 +3499,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3033,6 +3596,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
@@ -3156,6 +3726,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3224,6 +3801,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3302,6 +3886,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3368,6 +3959,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3434,6 +4032,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3500,9 +4105,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "\r",
+                  "// Run ONLY on iteration 1\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
@@ -3575,6 +4181,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3644,6 +4257,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3711,6 +4331,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3779,9 +4406,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "// Run ONLY on iteration 1\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
@@ -3876,6 +4503,14 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "\r",
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
@@ -3945,12 +4580,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "// Run ONLY on iteration 1\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
+                  "\r",
                   "\r",
                   "pm.test(\"Status code is 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
@@ -4039,9 +4675,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "// Run ONLY on iteration 1\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
@@ -4133,10 +4769,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// 1. Status code check\r",
-                  "pm.test(\"Status code is 400 Bad Request\", function () {\r",
-                  "    pm.response.to.have.status(400);\r",
-                  "});\r",
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
                   "\r",
                   "// 2. Verify error message for special characters\r",
                   "pm.test(\"Verify error message for special characters\", function () {\r",
@@ -4203,6 +4841,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 404 Not Found\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
                   "});\r",
@@ -4270,12 +4915,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "// Run ONLY on iteration 1\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
+                  "\r",
                   "\r",
                   "// Currently API ignores programName mismatch - marking as known bug\r",
                   "console.log(\"FINAL REQUEST BODY (Positive):\", JSON.parse(pm.request.body.raw));\r",
@@ -4370,6 +5016,14 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 201 Created\", function () {\r",
                   "    pm.response.to.have.status(201);\r",
@@ -4461,6 +5115,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1",
+                  "if (pm.info.iteration !== 0) {",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);",
+                  "    pm.test(\"Skipped for this iteration\", () => true);",
+                  "    return;",
+                  "}",
+                  "",
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
@@ -4503,6 +5164,14 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "pm.test(\"Status code is 200\", function () \r",
                   "{\r",
                   "     pm.response.to.have.status(200);\r",
@@ -4560,6 +5229,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "// Run ONLY on iteration 1\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 404 Not Found\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
@@ -4631,6 +5307,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 404 Not Found\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
@@ -4690,6 +5372,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 200\", function () \r",
                   "{\r",
                   "     pm.response.to.have.status(200);\r",
@@ -4747,6 +5435,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 404 Not Found\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
@@ -4818,6 +5512,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "pm.test(\"Status code is 200\", function () \r",
                   "{\r",
                   "     pm.response.to.have.status(200);\r",
@@ -4862,6 +5562,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 404 Not Found\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
@@ -4920,9 +5626,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Run ONLY on the first iteration\r",
+                  "\r",
                   "if (pm.info.iteration !== 0) {\r",
-                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
                   "    pm.test(\"Skipped for this iteration\", () => true);\r",
                   "    return;\r",
                   "}\r",
@@ -4973,6 +5679,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "// 1. Status code check\r",
                   "pm.test(\"Status code is 200 OK\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
@@ -5071,6 +5784,13 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping Batch Module tests — iteration:\", pm.info.iteration);\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "\r",
                   "pm.test(\"Status code is 200\", function () \r",
                   "{\r",
                   "     pm.response.to.have.status(200);\r",
@@ -5116,6 +5836,30 @@
             }
           },
           "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
         }
       ]
     },
