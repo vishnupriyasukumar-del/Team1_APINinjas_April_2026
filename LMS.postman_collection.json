@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "e90c4379-0ab2-4ca4-9fb2-dd374c8296a1",
+    "_postman_id": "f7acb7cc-bb98-4f04-b795-f96cf19d9395",
     "name": "LMS",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53617151",
-    "_collection_link": "https://go.postman.co/collection/53617151-e90c4379-0ab2-4ca4-9fb2-dd374c8296a1?source=collection_link"
+    "_exporter_id": "53720519",
+    "_collection_link": "https://go.postman.co/collection/53720519-f7acb7cc-bb98-4f04-b795-f96cf19d9395?source=collection_link"
   },
   "item": [
     {
@@ -7178,14 +7178,71 @@
       "name": "Class Module",
       "item": [
         {
-          "name": "Get All Class List",
+          "name": "Add New Class Chaining Positive",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "//Positive Scenario\r",
+                  "//CM_Post_TC01\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const responseData = pm.response.json();\r",
+                  "    // Save classId\r",
+                  "pm.collectionVariables.set(\"classIdChaining\", responseData.csId);\r",
+                  " console.log(\"Saved classId:\", responseData.csId);\r",
+                  "} else {\r",
+                  "    console.log(\"Class not created. Status:\", pm.response.code);\r",
+                  "}\r",
+                  "pm.test(\"Response has csId\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.csId).to.exist;\r",
+                  "});\r",
+                  "pm.test(\"classScheduledDates is array\", () => {\r",
+                  "    pm.expect(pm.response.json().classScheduledDates).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "// 1. VALIDATE classDate IS A FUTURE DATE\r",
+                  "pm.test(\"classDate is a future date\", () => {\r",
+                  "    const reqBody     = JSON.parse(pm.request.body.raw);\r",
+                  "    const classDate   = new Date(reqBody.classDate);\r",
+                  "    const currentDate = new Date();\r",
+                  "\r",
+                  "    console.log(\"classDate        :\", classDate);\r",
+                  "    console.log(\"Current Date     :\", currentDate);\r",
+                  "\r",
+                  "    pm.expect(\r",
+                  "        classDate.getTime(),\r",
+                  "        `classDate \"${reqBody.classDate}\" is not a future date`\r",
+                  "    ).to.be.greaterThan(currentDate.getTime());\r",
+                  "});\r",
+                  "\r",
+                  "// 2. VALIDATE classScheduledDates ARE FUTURE DATES\r",
+                  "\r",
+                  "pm.test(\"All classScheduledDates are future dates\", () => {\r",
+                  "    const reqBody     = JSON.parse(pm.request.body.raw);\r",
+                  "    const currentDate = new Date();\r",
+                  "\r",
+                  "    reqBody.classScheduledDates.forEach((date, index) => {\r",
+                  "        const scheduledDate = new Date(date);\r",
+                  "\r",
+                  "        console.log(`classScheduledDates[${index}]  :`, scheduledDate);\r",
+                  "        console.log(\"Current Date                  :\", currentDate);\r",
+                  "\r",
+                  "        pm.expect(\r",
+                  "            scheduledDate.getTime(),\r",
+                  "            `classScheduledDates[${index}] \"${date}\" is not a future date`\r",
+                  "        ).to.be.greaterThan(currentDate.getTime());\r",
+                  "    });\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -7205,10 +7262,19 @@
                 }
               ]
             },
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": \"{{batchIdChaining}}\",\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-23\",\r\n  \"classDescription\": \"QA testing\",\r\n  \"classStatus\": \"\",\r\n  \"classNo\": 2,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"Java Selenium Testing\",\r\n  \"classScheduledDates\": [\"2026-04-23\",\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/allClasses",
+              "raw": "https://lms-hackathon-api-april-2026-8b55b53c8fab.herokuapp.com/lms/CreateClassSchedule",
               "protocol": "https",
               "host": [
                 "lms-hackathon-api-april-2026-8b55b53c8fab",
@@ -7217,82 +7283,68 @@
               ],
               "path": [
                 "lms",
-                "allClasses"
+                "CreateClassSchedule"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Class Recording by Batch_ID",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/batchRecordings/1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "batchRecordings",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get_Class_Details_By_ID",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{lms_access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/class/5",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "class",
-                "5"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Add New Class Chaining",
+          "name": "Add New Class with No Auth",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "// pm.test(\"Status code is 201\", function () {\r",
-                  "//     pm.response.to.have.status(201);\r",
-                  "// });\r",
-                  "// pm.test(\"Response has csId\", function () {\r",
-                  "//     var jsonData = pm.response.json();\r",
-                  "//     pm.expect(jsonData.csId).to.exist;\r",
-                  "// });"
+                  "//CM_Post_TC02\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-24\",\r\n  \"classDescription\": \"API Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"API Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class Invalid Auth",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//CM_Post_TC02\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -7306,7 +7358,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{lms_access_token}}",
+                  "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZWFtMD",
                   "type": "string"
                 }
               ]
@@ -7341,6 +7393,7 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "//CM_Post_TC03\r",
                   "pm.test(\"Status code is 404\", function () {\r",
                   "    pm.response.to.have.status(404);\r",
                   "});"
@@ -7386,7 +7439,1009 @@
           "response": []
         },
         {
-          "name": "Get Classes By Staffid",
+          "name": "Add New Class missing mandatory batchId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "pm.test(\"Request body does not contain batchId\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    pm.expect(reqBody).to.not.have.property(\"batchId\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Request body batchId is null or undefined if present\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    if (reqBody.hasOwnProperty(\"batchId\")) {\r",
+                  "        pm.expect(reqBody.batchId === null || reqBody.batchId === undefined || reqBody.batchId.trim() === \"\").to.be.true;\r",
+                  "    }\r",
+                  "});\r",
+                  "//CM_Post_TC07\r",
+                  "//Status code\r",
+                  "pm.test(\"Bug2 - missing mandatory fields expected: 400 Bad request, but got: 401 unauthorized\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic\",\r\n  \"classDate\": \"2026-04-24\",\r\n  \"classDescription\": \"API Requests ahg\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"hjh API Requests Intro and Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class missing mandatory classTopic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "//VERIFY classTopic IS MISSING IN REQUEST\r",
+                  "\r",
+                  "pm.test(\"Request body does not contain classTopic\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    pm.expect(reqBody).to.not.have.property(\"classTopic\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Request body classTopic is null or undefined if present\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    if (reqBody.hasOwnProperty(\"classTopic\")) {\r",
+                  "        pm.expect(reqBody.classTopic === null || reqBody.classTopic === undefined || reqBody.classTopic.trim() === \"\").to.be.true;\r",
+                  "    }\r",
+                  "});\r",
+                  "//CM_Post_TC07\r",
+                  "//Status code\r",
+                  "pm.test(\"Bug2 - missing mandatory fields expected: 400 Bad request, but got: 401 unauthorized\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-25\",\r\n  \"classDescription\": \"API Auth Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 2,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \r\n  \"classScheduledDates\": [\"2026-04-25\",\"2026-04-26\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class missing mandatory classDate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 when classDate is null or empty\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": \"{{batchIdChaining}}\",\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic\",\r\n  \"classDate\": \"\",\r\n  \"classDescription\": \"API Requests\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"API Requests Intro and Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class missing mandatory classStaffId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request when classStaffId is null or empty \", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": \"{{batchIdChaining}}\",\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"API Requests\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \r\n  \"classTopic\": \"API Requests Intro and Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class studentId instead of StaffId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 classStaffId is empty or incorrect classStaffId\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": \"{{batchIdChaining}}\",\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"API Requests\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U231\",\r\n  \"classTopic\": \"API Requests Intro and Basics\",\r\n  \"classScheduledDates\": [\"2026-04-24\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class missing mandatory classNo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "//VERIFY classTopic IS MISSING IN REQUEST\r",
+                  "\r",
+                  "pm.test(\"Request body does not contain classNo\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    pm.expect(reqBody).to.not.have.property(\"classNo\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Request body classNo is null or undefined if present\", () => {\r",
+                  "    const reqBody = JSON.parse(pm.request.body.raw);\r",
+                  "    if (reqBody.hasOwnProperty(\"classNo\")) {\r",
+                  "        pm.expect(reqBody.classNo === null || reqBody.classNo === undefined || reqBody.classNo.trim() === \"\").to.be.true;\r",
+                  "    }\r",
+                  "});\r",
+                  "//CM_Post_TC09\r",
+                  "//Status code\r",
+                  "pm.test(\"Bug2 - missing mandatory fields expected: 400 Bad request, but got: 401 unauthorized\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-26\",\r\n  \"classDescription\": \"API Authentication Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"SDET and DA Basics\",\r\n  \"classScheduledDates\": [\"2026-04-26\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class with duplicate classTopic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//CM_Post_TC04 Already existing class topic\r",
+                  "pm.test(\"Status code is 400 for duplicate classTopic in same batch\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "pm.test(\"Error response contains a message or error field\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res).to.satisfy((r) => r.hasOwnProperty(\"message\") || r.hasOwnProperty(\"error\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": \"{{batchIdChaining}}\",\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"API Intro\",\r\n  \"classStatus\": \"Active\",\r\n  \"classNo\": 1,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"Java Selenium Testing\",\r\n  \"classScheduledDates\": [\"2026-04-27\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Class missing mandatory classStatus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "pm.test(\"Bug1 -Excected Status code 400 bad request, but received 201 and class gets created sucessfully with classStatus as null\", () => {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"batchId\": {{batchIdChaining}},\r\n  \"batchName\": \"{{batchNameChaining}}\",\r\n  \"classComments\": \"Basic session\",\r\n  \"classDate\": \"2026-04-27\",\r\n  \"classDescription\": \"Python for testing\",\r\n  \r\n  \"classNo\": 2,\r\n  \"classNotes\": \"Notes link\",\r\n  \"classRecordingPath\": \"recording_url\",\r\n  \"classStaffId\": \"U159\",\r\n  \"classTopic\": \"Python Pandas\",\r\n  \"classScheduledDates\": [\"2026-04-27\",\"2026-04-28\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/CreateClassSchedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "CreateClassSchedule"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Class List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run ONLY on the first iteration\r",
+                  "if (pm.info.iteration !== 0) {\r",
+                  "    console.log(\"Skipping — this test runs only on iteration 0\");\r",
+                  "    pm.test(\"Skipped for this iteration\", () => true);\r",
+                  "    return;\r",
+                  "}\r",
+                  "// 1. STATUS & RESPONSE STRUCTURE\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Content-Type is application/json\", () => {\r",
+                  "    pm.response.to.have.header(\"Content-Type\");\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response array is not empty\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "// 2. ALL SCHEMA FIELDS ARE PRESENT\r",
+                  "pm.test(\"All schema fields are present in each object\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const schemaFields = [\r",
+                  "        \"csId\", \"batchId\", \"classNo\", \"classDate\", \"classTopic\",\r",
+                  "        \"classStatus\", \"classStaffId\", \"classDescription\", \"classComments\",\r",
+                  "        \"classNotes\", \"classRecordingPath\", \"batchName\", \"classScheduledDates\"\r",
+                  "    ];\r",
+                  "    res.forEach((item) => {\r",
+                  "        schemaFields.forEach((field) => {\r",
+                  "            pm.expect(item, `Missing field: ${field}`).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "// 3. classDate — SCHEMA MANDATORY (*)\r",
+                  "pm.test(\"classDate is not null or undefined (schema mandatory)\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.classDate).to.not.equal(null);\r",
+                  "        pm.expect(item.classDate).to.not.be.undefined;\r",
+                  "        pm.expect(item.classDate.trim()).to.not.equal(\"\");\r",
+                  "    });\r",
+                  "});\r",
+                  "// 4. MANDATORY FIELDS — NOT NULL OR UNDEFINED\r",
+                  " pm.test(\"Mandatory fields are not null or undefined\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.batchId,             \"batchId is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.batchId,             \"batchId is undefined\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classNo,             \"classNo is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.classNo,             \"classNo is undefined\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classDate,           \"classDate is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.classDate,           \"classDate is undefined\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classTopic,          \"classTopic is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.classTopic,          \"classTopic is undefined\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classStatus,         \"classStatus is null/undefined - Bug1\").to.not.equal(null);\r",
+                  "        pm.expect(item.classStatus,         \"classStatus is undefined -Bug1\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classStaffId,        \"classStaffId is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.classStaffId,        \"classStaffId is undefined\").to.not.be.undefined;\r",
+                  "\r",
+                  "        pm.expect(item.classScheduledDates, \"classScheduledDates is null/undefined\").to.not.equal(null);\r",
+                  "        pm.expect(item.classScheduledDates, \"classScheduledDates is undefined\").to.not.be.undefined;\r",
+                  "    });\r",
+                  "});\r",
+                  "// 5. MANDATORY STRING FIELDS — NOT EMPTY\r",
+                  "pm.test(\"Mandatory string fields are not empty\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.classDate.trim(),    \"classDate is empty\").to.not.equal(\"\");\r",
+                  "        pm.expect(item.classTopic.trim(),   \"classTopic is empty\").to.not.equal(\"\");\r",
+                  "        pm.expect(item.classStatus.trim(),  \"classStatus is empty - Bug1\").to.not.equal(\"\");\r",
+                  "        pm.expect(item.classStaffId.trim(), \"classStaffId is empty\").to.not.equal(\"\");\r",
+                  "    });\r",
+                  "});\r",
+                  "// 6. DATA TYPE ASSERTIONS (FULL SCHEMA)\r",
+                  "pm.test(\"Field data types match schema\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        // -numeric fields\r",
+                  "        pm.expect(item.csId,    \"csId type\").to.be.a(\"number\");\r",
+                  "        pm.expect(item.batchId, \"batchId type\").to.be.a(\"number\");\r",
+                  "        pm.expect(item.classNo, \"classNo type\").to.be.a(\"number\");\r",
+                  "\r",
+                  "        // -string fields\r",
+                  "        pm.expect(item.classDate,          \"classDate type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classTopic,         \"classTopic type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classStatus,        \"Bug1 - classStatus type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classStaffId,       \"classStaffId type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classDescription,   \"classDescription type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classComments,      \"classComments type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classNotes,         \"classNotes type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.classRecordingPath, \"classRecordingPath type\").to.be.a(\"string\");\r",
+                  "        pm.expect(item.batchName,          \"batchName type\").to.be.a(\"string\");\r",
+                  "        // -array field\r",
+                  "        pm.expect(item.classScheduledDates, \"classScheduledDates type\").to.be.an(\"array\");\r",
+                  "    });\r",
+                  "});\r",
+                  "// 7. NUMERIC FIELD VALUE ASSERTIONS\r",
+                  "pm.test(\"Numeric fields have valid values\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.csId).to.be.at.least(0);\r",
+                  "        pm.expect(item.batchId).to.be.at.least(0);\r",
+                  "        pm.expect(item.classNo).to.be.at.least(1);\r",
+                  "    });\r",
+                  "});\r",
+                  "// 8. classScheduledDates ARRAY ASSERTIONS\r",
+                  "pm.test(\"classScheduledDates is a non-empty array of strings\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.classScheduledDates).to.be.an(\"array\");\r",
+                  "        pm.expect(item.classScheduledDates.length).to.be.greaterThan(0);\r",
+                  "        item.classScheduledDates.forEach((date) => {\r",
+                  "            pm.expect(date).to.be.a(\"string\");\r",
+                  "            pm.expect(date.trim()).to.not.equal(\"\");\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "// 9. NO UNEXPECTED FIELDS\r",
+                  "pm.test(\"No unexpected fields are present\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const allowedFields = [\r",
+                  "        \"csId\", \"batchId\", \"classNo\", \"classDate\", \"classTopic\",\r",
+                  "        \"classStatus\", \"classStaffId\", \"classDescription\", \"classComments\",\r",
+                  "        \"classNotes\", \"classRecordingPath\", \"batchName\", \"classScheduledDates\"\r",
+                  "    ];\r",
+                  "    res.forEach((item) => {\r",
+                  "        Object.keys(item).forEach((key) => {\r",
+                  "            pm.expect(allowedFields, `Unexpected field found: ${key}`).to.include(key);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "// 10. FULL JSON SCHEMA VALIDATION\r",
+                  "pm.test(\"Response matches full schema definition\", () => {\r",
+                  "    const Ajv = require('ajv');\r",
+                  "    const ajv = new Ajv();\r",
+                  "    const schema = {\r",
+                  "        type: \"array\",\r",
+                  "        items: {\r",
+                  "            type: \"object\",\r",
+                  "            required: [\"classDate\"],\r",
+                  "            properties: {\r",
+                  "                csId:                 { type: \"number\" },\r",
+                  "                batchId:              { type: \"number\" },\r",
+                  "                classNo:              { type: \"number\" },\r",
+                  "                classDate:            { type: \"string\", minLength: 1 },\r",
+                  "                classTopic:           { type: \"string\" },\r",
+                  "                classStatus:          { type: \"string\" },\r",
+                  "                classStaffId:         { type: \"string\" },\r",
+                  "                classDescription:     { type: \"string\" },\r",
+                  "                classComments:        { type: \"string\" },\r",
+                  "                classNotes:           { type: \"string\" },\r",
+                  "                classRecordingPath:   { type: \"string\" },\r",
+                  "                batchName:            { type: \"string\" },\r",
+                  "                classScheduledDates:  {\r",
+                  "                    type: \"array\",\r",
+                  "                    items: { type: \"string\" }\r",
+                  "                }\r",
+                  "            },\r",
+                  "            additionalProperties: false\r",
+                  "        }\r",
+                  "    };\r",
+                  "   const data = pm.response.json();\r",
+                  "   const validate = ajv.compile(schema);\r",
+                  "   const valid = validate(data);\r",
+                  "   pm.expect(valid).to.be.true;\r",
+                  "  // pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/allClasses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "allClasses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Recordings by BatchId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Response body is an array\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response array is not empty\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "pm.test(\"All schema fields are present in each object\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const schemaFields = [\"classRecordingPath\", \"csId\"];\r",
+                  "    res.forEach((item) => {\r",
+                  "        schemaFields.forEach((field) => {\r",
+                  "            pm.expect(item, `Missing field: ${field}`).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "pm.test(\"Field data types match schema\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.csId,                \"csId type\").to.be.a(\"number\");\r",
+                  "        pm.expect(item.classRecordingPath,  \"classRecordingPath type\").to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  "//recording assertions\r",
+                  "pm.test(\"classRecordingPath is not null or undefined\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.classRecordingPath, \"classRecordingPath is null\").to.not.equal(null);\r",
+                  "        pm.expect(item.classRecordingPath, \"classRecordingPath is undefined\").to.not.be.undefined;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"classRecordingPath is not empty\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    res.forEach((item) => {\r",
+                  "        pm.expect(item.classRecordingPath.trim(), \"classRecordingPath is empty\").to.not.equal(\"\");\r",
+                  "    });\r",
+                  "});\r",
+                  "//cid uniqueness\r",
+                  "pm.test(\"csId values are unique within the response\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const csIds = res.map((item) => item.csId);\r",
+                  "    const uniqueCsIds = [...new Set(csIds)];\r",
+                  "    pm.expect(csIds.length).to.equal(uniqueCsIds.length);\r",
+                  "});\r",
+                  "//schema validation\r",
+                  "pm.test(\"Response matches full JSON schema\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const schema = {\r",
+                  "        type: \"array\",\r",
+                  "        minItems: 1,\r",
+                  "        items: {\r",
+                  "            type: \"object\",\r",
+                  "            required: [\"classRecordingPath\", \"csId\"],\r",
+                  "            properties: {\r",
+                  "                csId:               { type: \"number\", minimum: 1 },\r",
+                  "                classRecordingPath: { type: \"string\", minLength: 1 }\r",
+                  "            },\r",
+                  "            additionalProperties: false\r",
+                  "        }\r",
+                  "    };\r",
+                  "    pm.expect(tv4.validate(res, schema)).to.be.true;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/batchRecordings/168",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "batchRecordings",
+                "168"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Details by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. STATUS & RESPONSE STRUCTURE\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Content-Type is application/json\", () => {\r",
+                  "    pm.response.to.have.header(\"Content-Type\");\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/class/532",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "class",
+                "532"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Details by Id Negative",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// NEGATIVE TEST — Missing classId in URL\r",
+                  "\r",
+                  "pm.test(\"Invalid Endpoint, csId is missing in URL\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/class/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "class",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Classes by Class Topic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "//Checking if response has classes with classTopic passed in the URL\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/classes/collection",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classes",
+                "collection"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Classes by BatchId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/classesbyBatch/147",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classesbyBatch",
+                "147"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Classes by StaffId",
           "event": [
             {
               "listen": "test",
@@ -7423,6 +8478,439 @@
               "path": [
                 "classesByStaff",
                 "U159"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Recordings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Response body is an array\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response array is not empty\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    pm.expect(res.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "pm.test(\"All schema fields are present in each object\", () => {\r",
+                  "    const res = pm.response.json();\r",
+                  "    const schemaFields = [\"classRecordingPath\", \"csId\"];\r",
+                  "    res.forEach((item) => {\r",
+                  "        schemaFields.forEach((field) => {\r",
+                  "            pm.expect(item, `Missing field: ${field}`).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/classrecordings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classrecordings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Recordings by Class Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/classRecordings/79",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classRecordings",
+                "79"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Upcoming Classes for Particular Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/upcomingClasses/U04",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "upcomingClasses",
+                "U04"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download Class Recordings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/download/80",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "download",
+                "80"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Class Schedule by ClassId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "if (pm.response.code === 200) {\r",
+                  "    const responseData = pm.response.json();\r",
+                  "    // Save classId\r",
+                  "pm.collectionVariables.set(\"classIdChaining\", responseData.csId);\r",
+                  " console.log(\"Saved classId:\", responseData.csId);\r",
+                  "} else {\r",
+                  "    console.log(\"Class not created. Status:\", pm.response.code);\r",
+                  "}\r",
+                  "pm.test(\"Response has csId\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.csId).to.exist;\r",
+                  "});\r",
+                  "pm.test(\"classScheduledDates is array\", () => {\r",
+                  "    pm.expect(pm.response.json().classScheduledDates).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "// 1. VALIDATE classDate IS A FUTURE DATE\r",
+                  "pm.test(\"classDate is a future date\", () => {\r",
+                  "    const reqBody     = JSON.parse(pm.request.body.raw);\r",
+                  "    const classDate   = new Date(reqBody.classDate);\r",
+                  "    const currentDate = new Date();\r",
+                  "\r",
+                  "    console.log(\"classDate        :\", classDate);\r",
+                  "    console.log(\"Current Date     :\", currentDate);\r",
+                  "\r",
+                  "    pm.expect(\r",
+                  "        classDate.getTime(),\r",
+                  "        `classDate \"${reqBody.classDate}\" is not a future date`\r",
+                  "    ).to.be.greaterThan(currentDate.getTime());\r",
+                  "});\r",
+                  "\r",
+                  "// 2. VALIDATE classScheduledDates ARE FUTURE DATES\r",
+                  "\r",
+                  "pm.test(\"All classScheduledDates are future dates\", () => {\r",
+                  "    const reqBody     = JSON.parse(pm.request.body.raw);\r",
+                  "    const currentDate = new Date();\r",
+                  "\r",
+                  "    reqBody.classScheduledDates.forEach((date, index) => {\r",
+                  "        const scheduledDate = new Date(date);\r",
+                  "\r",
+                  "        console.log(`classScheduledDates[${index}]  :`, scheduledDate);\r",
+                  "        console.log(\"Current Date                  :\", currentDate);\r",
+                  "\r",
+                  "        pm.expect(\r",
+                  "            scheduledDate.getTime(),\r",
+                  "            `classScheduledDates[${index}] \"${date}\" is not a future date`\r",
+                  "        ).to.be.greaterThan(currentDate.getTime());\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"csId\": 80,\r\n    \"batchId\": 168,\r\n    \"classNo\": 5,\r\n    \"classDate\": \"2026-04-27T00:00:00.000+00:00\",\r\n    \"classTopic\": \"SQL postgre\",\r\n    \"classStatus\": \"Active\",\r\n    \"classStaffId\": \"U159\",\r\n    \"classDescription\": \"SQL Aggregation and Joins\",\r\n    \"classComments\": \"Intermediate session\",\r\n    \"classNotes\": \"Notes link\",\r\n    \"classRecordingPath\": \"recording_url\",\r\n    \"batchName\": \"teamoneQHbkd_1\",\r\n    \"classScheduledDates\": [\r\n        \"2026-04-27T00:00:00.000+00:00\",\r\n        \"2026-04-28T00:00:00.000+00:00\",\r\n        \"2026-04-29T00:00:00.000+00:00\",\r\n        \"2026-04-30T00:00:00.000+00:00\",\r\n        \"2026-05-01T00:00:00.000+00:00\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/updateClass/80",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "updateClass",
+                "80"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Class Recording path",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"classRecordingPath\": \"recording_url\",   \r\n    \"csId\": 111\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/updateClassrecording/111",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "updateClassrecording",
+                "111"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete class by Class Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Positive Scenario\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/deleteByClass/111",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deleteByClass",
+                "111"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete class by Class Id Negative",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Negative Scenario\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lms_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/deleteByClass/8768",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deleteByClass",
+                "8768"
               ]
             }
           },
